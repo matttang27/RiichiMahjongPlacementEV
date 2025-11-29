@@ -1,76 +1,160 @@
 import gzip
 import json
 import zipfile
+import sqlite3
 
 # Path to the ZIP file and the file inside it
-zip_path = "2025.zip"
-file_in_zip = "2025/2025010100gm-00a9-0000-0c603e8f.mjson"
+ZIP_PATH = "2025.zip"
+DEST_DB_PATH = "rounds.db"
+
+def parse_mjson_lines(mjson_text: str, log_id: int):
+    """
+    Given the text of a single mjson game (one JSON object per line),
+    yield dicts representing each kyoku with:
+      - bakaze, round, honba, kyotaku, oya
+      - s_start: [s1, s2, s3, s4]
+      - s_final: [f1, f2, f3, f4] (final game scores)
+      - log_id
+    """
+    events = (json.loads(line) for line in mjson_text if line.strip())
+
+    current_scores = None          # [s1, s2, s3, s4]
+    rows = []                      # per-kyoku stubs
+
+    for ev in events:
+        t = ev.get("type")
+
+        if t in ["tsumo", "dahai", "chi", "pon", "kan", "kakan", "ankan", "dora", "daiminkan", "none", "end_kyoku", "reach", "start_game"]:
+            continue # Finding events I don't know about
+        elif t == "start_kyoku":
+            # Initialize current_scores when a new kyoku starts
+            current_scores = ev["scores"][:]
+            
+            rows.append({
+                "log_id": log_id,
+                "wind": ev["bakaze"],
+                "round": ev["kyoku"],
+                "honba": ev["honba"],
+                "riichi": ev["kyotaku"],
+                "s_start": ev["scores"][:]
+            })
+
+        elif t == "reach_accepted":
+            current_scores[ev["actor"]] -= 1000
+
+        elif t == "hora":
+            for i in range(4):
+                current_scores[i] += ev["deltas"][i]
+
+        elif t == "ryukyoku":
+            for i in range(4):
+                current_scores[i] += ev["deltas"][i]
+
+        elif t == "end_game":
+            # Game finished: current_scores is the final game scores
+            final_scores = current_scores[:]
+            for row in rows:
+                row["s_final"] = final_scores[:]
+                key = f"{row['log_id']}|{row['wind']}|{row['round']}|{row['honba']}|{row['riichi']}"
+                row["round_key"] = key
+
+                yield row #bro yield is so crazy this is genius 
+
+        else:
+            print(f"Unknown event type: {t}")
+
+def init_dest_db(path: str):
+    conn = sqlite3.connect(path)
+    cur = conn.cursor()
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS rounds (
+            round_key TEXT PRIMARY KEY,
+            log_id TEXT NOT NULL,
+
+            wind TEXT NOT NULL,
+            round INTEGER NOT NULL,
+            honba INTEGER NOT NULL,
+            riichi INTEGER NOT NULL,
+
+            s1_start INTEGER NOT NULL,
+            s2_start INTEGER NOT NULL,
+            s3_start INTEGER NOT NULL,
+            s4_start INTEGER NOT NULL,
+
+            s1_final INTEGER NOT NULL,
+            s2_final INTEGER NOT NULL,
+            s3_final INTEGER NOT NULL,
+            s4_final INTEGER NOT NULL
+        );
+        """
+    )
+    conn.commit()
+    return conn
+
+def build_rounds():
+    dest_conn = init_dest_db(DEST_DB_PATH)
+    dest_cur  = dest_conn.cursor()
+
+    count_games = 0
+    count_kyokus = 0
+
+    with zipfile.ZipFile(ZIP_PATH, "r") as z:
+        for file_name in z.namelist():
+            # Only process MJAI logs
+            if not file_name.endswith(".mjson") and not file_name.endswith(".mjson.gz"):
+                continue
+
+            # Extract log_id from filename
+            log_id = file_name
+
+            # Open file inside ZIP
+            with z.open(file_name, "r") as zipped_file:
+                # Try to decompress as gzip first
+                try:
+                    with gzip.GzipFile(fileobj=zipped_file, mode="rb") as f:
+                        lines = [line.decode('utf-8') for line in f]
+                except gzip.BadGzipFile:
+                    # If it fails, treat as plain text
+                    zipped_file.seek(0)  # Reset file pointer
+                    lines = [line.decode('utf-8') for line in zipped_file]
+
+                rows = list(parse_mjson_lines(lines, log_id))
+
+                # Insert into DB
+                for r in rows:
+                    s_start = r["s_start"]
+                    s_final = r["s_final"]
+
+                    dest_cur.execute("""
+                        INSERT OR IGNORE INTO rounds (
+                            round_key, log_id, wind, round, honba, riichi,
+                            s1_start, s2_start, s3_start, s4_start,
+                            s1_final, s2_final, s3_final, s4_final
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        r["round_key"],
+                        r["log_id"],
+                        r["wind"],
+                        r["round"],
+                        r["honba"],
+                        r["riichi"],
+                        s_start[0], s_start[1], s_start[2], s_start[3],
+                        s_final[0], s_final[1], s_final[2], s_final[3],
+                    ))
+
+                    count_kyokus += 1
+
+                count_games += 1
+
+                if count_games % 500 == 0:
+                    dest_conn.commit()
+                    print(f"Processed {count_games} games, inserted {count_kyokus} kyokus.")
+
+    dest_conn.commit()
+    print(f"\nDONE. Processed {count_games} games, inserted {count_kyokus} kyokus total.")
+    dest_conn.close()
 
 
-
-def print_final_scores(mjson_path: str) -> None:
-    # Read all lines once so we can scan & then re-scan from the last start_kyoku
-    with open(mjson_path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    last_start_idx = None
-    last_start_scores = None
-
-    # 1) Find the last start_kyoku and remember its scores + index
-    for i, raw in enumerate(lines):
-        line = raw.strip()
-        if not line:
-            continue
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-
-        if event.get("type") == "start_kyoku":
-            last_start_idx = i
-            last_start_scores = list(event["scores"])
-
-    if last_start_idx is None:
-        print("No start_kyoku found in file.")
-        return
-
-    # 2) Initialize scores to the scores at the start of the last hand
-    scores = list(last_start_scores)
-
-    # 3) Walk events of the last hand and update scores
-    for j in range(last_start_idx + 1, len(lines)):
-        line = lines[j].strip()
-        if not line:
-            continue
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-
-        etype = event.get("type")
-
-        if etype == "reach_accepted":
-            actor = event["actor"]
-            scores[actor] -= 1000
-
-        elif etype in ("hora", "ryukyoku"):
-            deltas = event["deltas"]
-            # Apply deltas to all four players
-            for idx in range(4):
-                scores[idx] += deltas[idx]
-
-    print("Final scores:", scores)
-
-with zipfile.ZipFile(zip_path, 'r') as zip_file:
-    with zip_file.open(file_in_zip) as compressed_file:
-        # Since the file is gzipped, we need to decompress it
-        with gzip.open(compressed_file, "rt", encoding="utf-8") as f:
-            with open("output.txt2", "w", encoding="utf-8") as output_file:
-                
-                for line in f:
-                    event = json.loads(line)
-                    output_file.write(json.dumps(event) + "\n")
-
-print_final_scores("output.txt")
-print_final_scores("output.txt2")
-
+if __name__ == "__main__":
+    build_rounds()
