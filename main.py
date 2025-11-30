@@ -2,9 +2,10 @@ import gzip
 import json
 import zipfile
 import sqlite3
+import os
 
 # Path to the ZIP file and the file inside it
-ZIP_PATH = "2025.zip"
+ZIPS_DIR = "zips"
 DEST_DB_PATH = "rounds.db"
 
 def parse_mjson_lines(mjson_text: str, log_id: int):
@@ -92,47 +93,53 @@ def init_dest_db(path: str):
     conn.commit()
     return conn
 
-def build_rounds():
-    dest_conn = init_dest_db(DEST_DB_PATH)
-    dest_cur  = dest_conn.cursor()
+def get_existing_log_ids(conn):
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT log_id FROM rounds;")
+    return {row[0] for row in cur.fetchall()}
 
-    count_games = 0
-    count_kyokus = 0
 
-    with zipfile.ZipFile(ZIP_PATH, "r") as z:
+def process_zip(zip_path: str, dest_conn, existing_log_ids):
+    dest_cur = dest_conn.cursor()
+    games_in_zip = 0
+    kyokus_in_zip = 0
+
+    with zipfile.ZipFile(zip_path, "r") as z:
         for file_name in z.namelist():
-            # Only process MJAI logs
-            if not file_name.endswith(".mjson") and not file_name.endswith(".mjson.gz"):
+            if not (file_name.endswith(".mjson") or file_name.endswith(".mjson.gz")):
                 continue
 
-            # Extract log_id from filename
-            log_id = file_name
+            log_id = file_name  # should be stable across runs
 
-            # Open file inside ZIP
+            # Already processed this game before → skip
+            if log_id in existing_log_ids:
+                continue
+
             with z.open(file_name, "r") as zipped_file:
-                # Try to decompress as gzip first
                 try:
+                    # Try gzip
                     with gzip.GzipFile(fileobj=zipped_file, mode="rb") as f:
-                        lines = [line.decode('utf-8') for line in f]
+                        lines = [line.decode("utf-8") for line in f]
                 except gzip.BadGzipFile:
-                    # If it fails, treat as plain text
-                    zipped_file.seek(0)  # Reset file pointer
-                    lines = [line.decode('utf-8') for line in zipped_file]
+                    # Not gzipped → plain text
+                    zipped_file.seek(0)
+                    lines = [line.decode("utf-8") for line in zipped_file]
 
-                rows = list(parse_mjson_lines(lines, log_id))
+            rows = list(parse_mjson_lines(lines, log_id))
 
-                # Insert into DB
-                for r in rows:
-                    s_start = r["s_start"]
-                    s_final = r["s_final"]
+            for r in rows:
+                s_start = r["s_start"]
+                s_final = r["s_final"]
 
-                    dest_cur.execute("""
-                        INSERT OR IGNORE INTO rounds (
-                            round_key, log_id, wind, round, honba, riichi,
-                            s1_start, s2_start, s3_start, s4_start,
-                            s1_final, s2_final, s3_final, s4_final
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """, (
+                dest_cur.execute(
+                    """
+                    INSERT OR IGNORE INTO rounds (
+                        round_key, log_id, wind, round, honba, riichi,
+                        s1_start, s2_start, s3_start, s4_start,
+                        s1_final, s2_final, s3_final, s4_final
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
                         r["round_key"],
                         r["log_id"],
                         r["wind"],
@@ -141,20 +148,45 @@ def build_rounds():
                         r["riichi"],
                         s_start[0], s_start[1], s_start[2], s_start[3],
                         s_final[0], s_final[1], s_final[2], s_final[3],
-                    ))
+                    ),
+                )
+                kyokus_in_zip += 1
 
-                    count_kyokus += 1
+            if rows:
+                existing_log_ids.add(log_id)
+                games_in_zip += 1
 
-                count_games += 1
-
-                if count_games % 500 == 0:
-                    dest_conn.commit()
-                    print(f"Processed {count_games} games, inserted {count_kyokus} kyokus.")
+            if games_in_zip and games_in_zip % 500 == 0:
+                dest_conn.commit()
+                print(
+                    f"[{os.path.basename(zip_path)}] "
+                    f"Processed {games_in_zip} games, inserted {kyokus_in_zip} kyokus so far."
+                )
 
     dest_conn.commit()
-    print(f"\nDONE. Processed {count_games} games, inserted {count_kyokus} kyokus total.")
-    dest_conn.close()
+    print(
+        f"[{os.path.basename(zip_path)}] DONE. "
+        f"Processed {games_in_zip} new games, inserted {kyokus_in_zip} kyokus from this zip."
+    )
+
+
+def build_rounds_all_years(start_year=2025, end_year=2025):
+    conn = init_dest_db(DEST_DB_PATH)
+    existing_log_ids = get_existing_log_ids(conn)
+    print(f"Loaded {len(existing_log_ids)} existing log_ids from DB.")
+
+    for year in range(start_year, end_year + 1):
+        zip_path = os.path.join(ZIPS_DIR, f"{year}.zip")
+        if not os.path.exists(zip_path):
+            print(f"{zip_path} not found, skipping year {year}.")
+            continue
+
+        print(f"\n=== Processing {zip_path} ===")
+        process_zip(zip_path, conn, existing_log_ids)
+
+    conn.close()
+    print("\nAll done.")
 
 
 if __name__ == "__main__":
-    build_rounds()
+    build_rounds_all_years()
