@@ -3,6 +3,13 @@ This repo aims to calculate expected values at the start of a round given the ga
 
 Using tenhou uma - 90/45/0/-135.
 
+Given these inputs, it should return the expected value for each player.
+For example, starting at S4 with 0/20/32.5/45 should return something similar to 
+-135/-5/52.5/110, because of the difficulty of changing placements in the last round.
+
+Therefore f(1,4,0,0,0,15000,30000,55000) ~= (-135,-5,52.5,110)
+
+Motivation:
 
 Say you are at the start of South 3, leading.
 
