@@ -7,7 +7,7 @@ import numpy as np
 import xgboost as xgb
 
 ROUNDS_DB_PATH = "rounds.db"
-MODEL_PATH = "ev_model2.json"
+MODEL_PATH = "ev_model1.json"
 
 
 # ---------- UMA / scoring ----------

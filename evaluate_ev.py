@@ -10,7 +10,7 @@ from ev_model import (
 )
 
 ROUNDS_DB_PATH = "rounds.db"
-MODEL_PATH = "ev_model2.json"
+MODEL_PATH = "ev_model1.json"
 
 
 def evaluate_model_ev(max_rows=None):
