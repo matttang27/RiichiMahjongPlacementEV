@@ -8,7 +8,6 @@ import os
 ZIPS_DIR = "./"
 DEST_DB_PATH = "./rounds.db"
 
-
 def compute_placements(final_scores: list[int]) -> list[int]:
     # Sort seats by score desc, tie-break by seat index asc
     order = sorted(range(4), key=lambda i: (-final_scores[i], i))
@@ -79,7 +78,7 @@ def init_dest_db(path: str):
     score_cols = ",\n            ".join(
         [f"s{i}_start INTEGER NOT NULL" for i in range(1, 5)]
         + [f"s{i}_final INTEGER NOT NULL" for i in range(1, 5)]
-        + [f"s{i}_y_residual REAL" for i in range(1, 5)]
+        + [f"s{i}_y_residual INTEGER" for i in range(1, 5)]
         + [f"s{i}_place INTEGER" for i in range(1, 5)]
     )
 
@@ -150,9 +149,10 @@ def process_zip(zip_path: str, dest_conn, existing_log_ids):
                     start_uma_th = [placement_to_uma_th(p) for p in start_places]
                     final_uma_th = [placement_to_uma_th(p) for p in final_places]
 
-                    # Residual in thousands: (final_score + final_uma) - (start_score + start_uma)
+                    # Residual in points (integer): 1000 * (thousands-residual)
+                    # = (final_score + final_uma_pts) - (start_score + start_uma_pts)
                     y_residuals = [
-                        float((s_final[i] / 1000.0 + final_uma_th[i]) - (s_start[i] / 1000.0 + start_uma_th[i]))
+                        int((s_final[i] + final_uma_th[i] * 1000) - (s_start[i] + start_uma_th[i] * 1000))
                         for i in range(4)
                     ]
                     placements = final_places
