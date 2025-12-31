@@ -5,13 +5,22 @@ import sqlite3
 import os
 
 # Path to the ZIP file and the file inside it
-ZIPS_DIR = "zips"
-DEST_DB_PATH = "rounds.db"
+ZIPS_DIR = "./"
+DEST_DB_PATH = "./rounds.db"
+
+
+def compute_placements(final_scores: list[int]) -> list[int]:
+    # Sort seats by score desc, tie-break by seat index asc
+    order = sorted(range(4), key=lambda i: (-final_scores[i], i))
+    placements = [0] * 4
+    for place, seat in enumerate(order, start=1):
+        placements[seat] = place
+    return placements
 
 def parse_mjson_lines(mjson_text: str, log_id: int):
     """
-    Given the text of a single mjson game (one JSON object per line),
-    yield dicts representing each kyoku with:
+    Given the text of a single mjson game (check example.txt),
+    yield dicts representing each round with:
       - bakaze, round, honba, kyotaku, oya
       - s_start: [s1, s2, s3, s4]
       - s_final: [f1, f2, f3, f4] (final game scores)
@@ -67,8 +76,15 @@ def parse_mjson_lines(mjson_text: str, log_id: int):
 def init_dest_db(path: str):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
+    score_cols = ",\n            ".join(
+        [f"s{i}_start INTEGER NOT NULL" for i in range(1, 5)]
+        + [f"s{i}_final INTEGER NOT NULL" for i in range(1, 5)]
+        + [f"s{i}_y_residual REAL" for i in range(1, 5)]
+        + [f"s{i}_place INTEGER" for i in range(1, 5)]
+    )
+
     cur.execute(
-        """
+        f"""
         CREATE TABLE IF NOT EXISTS rounds (
             round_key TEXT PRIMARY KEY,
             log_id TEXT NOT NULL,
@@ -78,15 +94,7 @@ def init_dest_db(path: str):
             honba INTEGER NOT NULL,
             riichi INTEGER NOT NULL,
 
-            s1_start INTEGER NOT NULL,
-            s2_start INTEGER NOT NULL,
-            s3_start INTEGER NOT NULL,
-            s4_start INTEGER NOT NULL,
-
-            s1_final INTEGER NOT NULL,
-            s2_final INTEGER NOT NULL,
-            s3_final INTEGER NOT NULL,
-            s4_final INTEGER NOT NULL
+            {score_cols}
         );
         """
     )
@@ -131,13 +139,33 @@ def process_zip(zip_path: str, dest_conn, existing_log_ids):
                 s_start = r["s_start"]
                 s_final = r["s_final"]
 
+                y_residuals = [None, None, None, None]
+                placements = [None, None, None, None]
+                if r["wind"] in ("E", "S"):
+                    placement_to_uma_th = lambda p: [90, 45, 0, -135][p - 1]
+
+                    start_places = compute_placements(s_start)
+                    final_places = compute_placements(s_final)
+
+                    start_uma_th = [placement_to_uma_th(p) for p in start_places]
+                    final_uma_th = [placement_to_uma_th(p) for p in final_places]
+
+                    # Residual in thousands: (final_score + final_uma) - (start_score + start_uma)
+                    y_residuals = [
+                        float((s_final[i] / 1000.0 + final_uma_th[i]) - (s_start[i] / 1000.0 + start_uma_th[i]))
+                        for i in range(4)
+                    ]
+                    placements = final_places
+
                 dest_cur.execute(
                     """
                     INSERT OR IGNORE INTO rounds (
                         round_key, log_id, wind, round, honba, riichi,
                         s1_start, s2_start, s3_start, s4_start,
-                        s1_final, s2_final, s3_final, s4_final
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        s1_final, s2_final, s3_final, s4_final,
+                        s1_y_residual, s2_y_residual, s3_y_residual, s4_y_residual,
+                        s1_place, s2_place, s3_place, s4_place
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         r["round_key"],
@@ -146,8 +174,10 @@ def process_zip(zip_path: str, dest_conn, existing_log_ids):
                         r["round"],
                         r["honba"],
                         r["riichi"],
-                        s_start[0], s_start[1], s_start[2], s_start[3],
-                        s_final[0], s_final[1], s_final[2], s_final[3],
+                        *s_start,
+                        *s_final,
+                        *y_residuals,
+                        *placements,
                     ),
                 )
                 kyokus_in_zip += 1
