@@ -1,6 +1,6 @@
 import streamlit as st
 
-from ev_model import load_model, estimate_all_values, compute_uma
+from models.xgboost_model import load_model, estimate_all_values, compute_uma
 
 # --- constants / defaults ---
 

@@ -1,3 +1,5 @@
-zips
+*.zip
 rounds.db
 output.txt2
+.venv
+*.pyc

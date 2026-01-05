@@ -4,25 +4,17 @@ import sqlite3
 from pathlib import Path
 
 import numpy as np
-import models.xgboost_model as xgb
+import xgboost as xgb
 
 ROUNDS_DB_PATH = "data/rounds.db"
-MODEL_PATH = "ev_model1.json"
+MODEL_PATH = "xgboost.json"
 
-
-# ---------- UMA / scoring ----------
-
-def compute_uma(final_scores, uma_scheme=(90000, 45000, 0, -135000)):
-    """
-    final_scores: list/tuple of 4 ints in points (e.g. [45000, 25000, ...])
-    returns: list of 4 ints in points (e.g. [90000, 0, 45000, -135000])
-    """
-    # Higher score is better; break ties by smaller seat index.
-    order = sorted(range(4), key=lambda i: (-final_scores[i], i))
-    uma = [0, 0, 0, 0]
-    for seat, pts in zip(order, uma_scheme):
-        uma[seat] = pts
-    return uma
+try:
+    # When imported as a package module: models.xgboost_model
+    from .helper import compute_uma
+except ImportError:  # pragma: no cover
+    # When run from within models/
+    from helper import compute_uma
 
 
 # ---------- Feature encoding ----------
