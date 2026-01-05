@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import xgboost as xgb
 
-ROUNDS_DB_PATH = "rounds.db"
+ROUNDS_DB_PATH = "data/rounds.db"
 MODEL_PATH = "ev_model1.json"
 
 

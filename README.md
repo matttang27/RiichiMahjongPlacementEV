@@ -112,3 +112,12 @@ The expected value of these scores are now more murky. When winning, you now hav
 The positives and negatives of pushing are now less clear. This is where this tool comes in - by estimating the EV of each future scenario, you can make a more informed decision in the present.
 
 Of course, this is a simplified example. In reality, you have to consider the chances of other players winning the current hand, and the chances of tsumo vs ron, etc. I don't ever expect to use this tool for actual gameplay, but instead to understand general trends and the value of point differences in various situations.
+
+## Implementation
+
+Lowkey, this is my first time using machine learning or doing any data science stuff like this. Asking ChatGPT to build the model was the easy part - I'm struggling with how to properly evaluate the model. I'm like PRETTY SURE its RMSE but I swear I'm being gaslighted by ChatGPT saying it's MAE.
+
+More detailed modeling/evaluation notes: `docs/ev_modeling_notes.md`.
+
+
+

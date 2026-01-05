@@ -6,7 +6,7 @@ import os
 
 # Path to the ZIP file and the file inside it
 ZIPS_DIR = "./"
-DEST_DB_PATH = "./rounds.db"
+DEST_DB_PATH = "data/rounds.db"
 
 def compute_placements(final_scores: list[int]) -> list[int]:
     # Sort seats by score desc, tie-break by seat index asc
@@ -73,6 +73,7 @@ def parse_mjson_lines(mjson_text: str, log_id: int):
             print(f"Unknown event type: {t}")
 
 def init_dest_db(path: str):
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     conn = sqlite3.connect(path)
     cur = conn.cursor()
     score_cols = ",\n            ".join(
