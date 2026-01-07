@@ -9,12 +9,7 @@ import xgboost as xgb
 ROUNDS_DB_PATH = "data/rounds.db"
 MODEL_PATH = "xgboost.json"
 
-try:
-    # When imported as a package module: models.xgboost_model
-    from .helper import compute_uma
-except ImportError:  # pragma: no cover
-    # When run from within models/
-    from helper import compute_uma
+from .helper import compute_uma
 
 
 # ---------- Feature encoding ----------

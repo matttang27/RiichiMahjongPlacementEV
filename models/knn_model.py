@@ -29,25 +29,7 @@ from typing import Iterable, Sequence
 
 import numpy as np
 
-try:
-    # When imported as a package module: models.knn_model
-    from .helper import compute_uma
-except ImportError:  # pragma: no cover
-    # When run directly from within models/
-    from helper import compute_uma
-
-
-def _wind_to_id(wind: str | int) -> int:
-    wind_map = {"E": 0, "S": 1, 0: 0, 1: 1}
-    try:
-        return int(wind_map[wind])
-    except KeyError as e:
-        raise ValueError(f"Unsupported wind: {wind!r}. Use 'E'/'S' or 0/1.") from e
-
-
-def _bucket_5(x: int) -> int:
-    return min(int(x), 5)
-
+from .helper import compute_uma, _wind_to_id
 
 def _encode_state(
     wind: str | int,
@@ -66,8 +48,8 @@ def _encode_state(
         [
             float(_wind_to_id(wind)),
             float(int(round_num)),
-            float(_bucket_5(honba)),
-            float(_bucket_5(riichi)),
+            float(honba),
+            float(riichi),
             float(scores_th[0]),
             float(scores_th[1]),
             float(scores_th[2]),

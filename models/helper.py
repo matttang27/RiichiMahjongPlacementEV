@@ -22,3 +22,11 @@ def compute_uma(final_scores, uma_scheme=UMA):
     for seat, pts in zip(order, uma_scheme):
         uma[seat] = pts
     return uma
+
+def _wind_to_id(wind: str | int) -> int:
+    wind_map = {"E": 0, "S": 1, 0: 0, 1: 1}
+    try:
+        return int(wind_map[wind])
+    except KeyError as e:
+        raise ValueError(f"Unsupported wind: {wind!r}. Use 'E'/'S' or 0/1.") from e
+    

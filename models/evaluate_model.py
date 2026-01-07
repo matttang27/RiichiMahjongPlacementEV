@@ -18,7 +18,11 @@ from __future__ import annotations
 
 import argparse
 import sqlite3
+import time
+from collections import defaultdict
 from collections.abc import Sequence
+from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 
@@ -32,10 +36,14 @@ DEFAULT_DB_PATH = "../data/rounds.db"
 DEFAULT_MODEL_PATH = "xgboost.json"
 DEFAULT_CALIBRATION_BUCKETS = 20
 
+DEFAULT_OUT_PATH = "evaluation_report.txt"
+DEFAULT_GROUP_CALIB_MIN_SAMPLES = 200  # measured in seat-samples (4 per round)
+
 model = load_model(DEFAULT_MODEL_PATH)
+
+
 # CHANGE YOUR MODEL HERE:
 def predict(wind, round_num, honba, riichi, scores_pts) -> tuple[float, float, float, float]:
-
     scores_div = [s / 1000.0 for s in scores_pts]
 
     evs = estimate_all_values(
@@ -48,29 +56,33 @@ def predict(wind, round_num, honba, riichi, scores_pts) -> tuple[float, float, f
     )
     return evs
 
+
 def _mse(a: np.ndarray, b: np.ndarray) -> float:
-    d = a - b
-    return float(np.mean(d * d))
+    return float(np.mean((a - b) * (a - b)))
+
 
 def _safe_corrcoef(a: np.ndarray, b: np.ndarray) -> float:
-    # Handle constant vectors (np.corrcoef would return nan)
     if a.size == 0 or b.size == 0:
         return float("nan")
     if float(np.std(a)) == 0.0 or float(np.std(b)) == 0.0:
         return float("nan")
     return float(np.corrcoef(a, b)[0, 1])
 
-def _print_calibration_by_buckets(
-    actual: np.ndarray, model: np.ndarray, buckets: int
-) -> None:
-    if buckets <= 0:
-        return
-    if actual.size == 0:
-        return
+def _format_group_key(key: tuple[str, int, int, int]) -> str:
+    wind, rnd, honba_b, riichi_b = key
+    # Example: "S1 honba=1 riichi=1" (South 1, 1 honba, 1 riichi)
+    return f"{wind}{rnd} honba={honba_b} riichi={riichi_b}"
 
-    buckets = int(buckets)
-    buckets = max(1, buckets)
-    buckets = min(buckets, int(actual.size))
+
+# Sorts the list of actual EVs and model EVs by the model ev.
+# Buckets similar model EV together to see whether the actual EV mean matches.
+def _print_calibration_by_EV_buckets(
+    actual: np.ndarray, model: np.ndarray, buckets: int
+) -> list[str]:
+    if buckets <= 0 or actual.size == 0:
+        return []
+
+    buckets = max(min(buckets, int(actual.size)), 1)
 
     order = np.argsort(model, kind="mergesort")
     actual_sorted = actual[order]
@@ -79,15 +91,97 @@ def _print_calibration_by_buckets(
     # Split into approximately-equal-count buckets (quantile buckets).
     splits = np.array_split(np.arange(model_sorted.size), buckets)
 
-    print("\n--- Calibration by predicted-EV buckets (primary check) ---")
-    print("bucket\tcount\tmean_pred\tmean_actual\tdiff")
+    lines: list[str] = []
+    lines.append("\n--- Calibration by predicted-EV buckets (primary check) ---")
+    lines.append("bucket\tcount\tmean_pred\tmean_actual\tdiff")
+    total_diff = 0.0
     for idx, s in enumerate(splits, start=1):
         if s.size == 0:
             continue
         mp = float(np.mean(model_sorted[s]))
         ma = float(np.mean(actual_sorted[s]))
         diff = ma - mp
-        print(f"{idx:02d}\t{s.size}\t{mp:+.3f}\t\t{ma:+.3f}\t\t{diff:+.3f}")
+        total_diff += abs(diff)
+        lines.append(f"{idx:02d}\t{s.size}\t{mp:+.3f}\t\t{ma:+.3f}\t\t{diff:+.3f}")
+    lines.append(
+        f"Avg abs diff over all buckets: {total_diff / float(len(splits)):+.3f} - note this changes with #buckets"
+    )
+    return lines
+
+
+def _metrics_block(
+    *,
+    actual: np.ndarray,
+    model: np.ndarray,
+    rounds: int,
+    skipped_rounds: int,
+    total_sum_model: float,
+    sum_model_squares: float,
+    max_abs_sum_model: float,
+) -> list[str]:
+    if rounds == 0:
+        return [
+            "\n=== EV ACCURACY RESULTS ===",
+            "Rounds evaluated      : 0",
+            f"Rounds skipped (W+)   : {skipped_rounds}",
+            "No rounds to evaluate (check DB / validate split).",
+        ]
+
+    model_mse = _mse(actual, model)
+    model_rmse = float(np.sqrt(model_mse))
+    model_mae = float(np.mean(np.abs(actual - model)))
+    model_corr = _safe_corrcoef(actual, model)
+
+    avg_sum_model = total_sum_model / max(rounds, 1)
+    sum_model_rmse = float(np.sqrt(sum_model_squares / max(rounds, 1)))
+
+    lines: list[str] = []
+    lines.append("\n=== EV ACCURACY RESULTS ===")
+    lines.append(f"Rounds evaluated      : {rounds}")
+    lines.append(f"Rounds skipped (W+)   : {skipped_rounds}")
+    lines.append(f"Avg sum(model EVs)    : {avg_sum_model:.4f} (should be ~0)")
+    lines.append(f"RMSE(sum model EVs)   : {sum_model_rmse:.4f} (should be small)")
+    lines.append(f"Max |sum model EVs|   : {max_abs_sum_model:.4f}")
+
+    lines.append("\n--- MSE / RMSE (thousands of points² / thousands) ---")
+    lines.append(f"Model MSE             : {model_mse:.4f}")
+    lines.append(f"Model RMSE            : {model_rmse:.4f}")
+    lines.append(f"Model MAE (diagnostic): {model_mae:.4f}")
+
+    lines.append("\n--- Correlation with true EV ---")
+    lines.append(f"Model corr            : {model_corr:.4f}")
+    return lines
+
+
+@dataclass
+class _GroupAccum:
+    actual_evs: list[float] = field(default_factory=list)
+    model_evs: list[float] = field(default_factory=list)
+    rounds: int = 0
+    total_sum_model: float = 0.0
+    sum_model_squares: float = 0.0
+    max_abs_sum_model: float = 0.0
+
+
+def _next_available_report_path(out_path: str) -> Path:
+    """
+    Never overwrite an existing report file.
+    If out_path exists, write out_path with an incrementing suffix: _1, _2, ...
+    """
+    p = Path(out_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+
+    if not p.exists():
+        return p
+
+    stem = p.stem
+    suffix = p.suffix or ".txt"
+    i = 1
+    while True:
+        candidate = p.with_name(f"{stem}_{i}{suffix}")
+        if not candidate.exists():
+            return candidate
+        i += 1
 
 
 def evaluate_model_ev(
@@ -97,15 +191,18 @@ def evaluate_model_ev(
     validate_split: float,
     max_rounds: int | None,
     calibration_buckets: int,
+    out_path: str
 ) -> dict:
+    t0 = time.perf_counter()
+
+    global model
+    model = load_model(model_path)
 
     if not (0.0 < validate_split < 1.0):
         raise ValueError("validate_split must be in (0, 1)")
 
     total_count = _get_round_count(db_path)
     start_index = int(total_count * (1 - validate_split))
-
-    model_obj = load_model(model_path)
 
     conn = sqlite3.connect(db_path)
     try:
@@ -132,10 +229,14 @@ def evaluate_model_ev(
         abs_sum_model_max = 0.0
         sum_model_squares = 0.0
 
-        for row in cur:
-            if max_rounds is not None and count_rounds >= max_rounds:
-                break
+        # Grouped stats: (wind, round_num, honba_bucket, riichi_bucket) -> accumulator
+        group_acc: dict[tuple[str, int, int, int], _GroupAccum] = defaultdict(_GroupAccum)
 
+        # Special identical-state accumulator: E1, honba=0, riichi=0, all scores=25000
+        e1_identical_rounds = 0
+        e1_sum_actual_by_seat = np.zeros(4, dtype=np.float64)
+
+        for row in cur:
             wind, rnd, honba, riichi = row[0], int(row[1]), int(row[2]), int(row[3])
 
             # Match repo convention: evaluate only East/South games.
@@ -143,41 +244,163 @@ def evaluate_model_ev(
                 skipped_rounds += 1
                 continue
 
-            s_start_pts = row[4:8]
+            honba_b = min(honba, 5)
+            riichi_b = min(riichi, 5)
+            gkey = (str(wind), int(rnd), honba_b, riichi_b)
+
+            s_start_pts = list(row[4:8])
             s_final_pts = row[8:12]
             s_final_places = row[12:16]
             final_uma = [UMA[place - 1] for place in s_final_places]
-            pred = predict(wind,rnd,honba,riichi,s_start_pts)
+
+            pred = predict(wind, rnd, honba_b, riichi_b, s_start_pts)
             if len(pred) != 4:
                 raise ValueError(f"Model must return 4 EVs. Got {len(pred)}")
 
-            actual_evs.extend(
-                [
-                    (s_final_pts[i] + final_uma[i]) / 1000.0 - 25.0
-                    for i in range(4)
-                ]
-            )
-            model_evs.extend([float(x) for x in pred])
+            # Per-seat datapoints (overall + group)
+            per_seat_actual = [
+                (s_final_pts[i] + final_uma[i]) / 1000.0 - 25.0
+                for i in range(4)
+            ]
+            per_seat_model = [float(x) for x in pred]
 
+            actual_evs.extend(per_seat_actual)
+            model_evs.extend(per_seat_model)
+
+            ga = group_acc[gkey]
+            ga.actual_evs.extend(per_seat_actual)
+            ga.model_evs.extend(per_seat_model)
+
+            # Special identical-state check: only E1/0/0 with all scores == 25000
+            if (
+                str(wind) == "E"
+                and int(rnd) == 1
+                and int(honba_b) == 0
+                and int(riichi_b) == 0
+                and s_start_pts == [25000, 25000, 25000, 25000]
+            ):
+                e1_identical_rounds += 1
+                e1_sum_actual_by_seat += np.array(per_seat_actual, dtype=np.float64)
+
+            # Per-round zero-sum checks (overall + group)
             round_sum = float(sum(pred))
             total_sum_model += round_sum
             abs_sum_model_max = max(abs_sum_model_max, abs(round_sum))
             sum_model_squares += round_sum * round_sum
 
+            ga.rounds += 1
+            ga.total_sum_model += round_sum
+            ga.max_abs_sum_model = max(ga.max_abs_sum_model, abs(round_sum))
+            ga.sum_model_squares += round_sum * round_sum
+
             count_rounds += 1
+            if max_rounds is not None and count_rounds >= max_rounds:
+                break
             if (count_rounds % 1000) == 0:
                 print(f"Processed {count_rounds} rounds...")
     finally:
         conn.close()
 
     actual = np.array(actual_evs, dtype=np.float32)
-    model = np.array(model_evs, dtype=np.float32)
+    model_arr = np.array(model_evs, dtype=np.float32)
+
+    # Build report (single string -> console + file)
+    report_lines: list[str] = []
+    report_lines.append(f"Using model: {model_path}")
+    report_lines.append(f"DB: {db_path}")
+    report_lines.append(f"Validate split (last N%): {validate_split}")
+    report_lines.append(f"Max rounds cap: {max_rounds}")
+    report_lines.append(f"Calibration buckets: {calibration_buckets}")
+
+    report_lines.extend(
+        _metrics_block(
+            actual=actual,
+            model=model_arr,
+            rounds=count_rounds,
+            skipped_rounds=skipped_rounds,
+            total_sum_model=total_sum_model,
+            sum_model_squares=sum_model_squares,
+            max_abs_sum_model=abs_sum_model_max,
+        )
+    )
+
+    # Overall calibration (kept)
+    if count_rounds != 0:
+        report_lines.extend(
+            _print_calibration_by_EV_buckets(
+                actual=actual, model=model_arr, buckets=int(calibration_buckets)
+            )
+        )
+
+    # Special identical-state section (E1 honba=0 riichi=0, all 25000)
+    report_lines.append("\n\n=== SPECIAL CHECK: IDENTICAL START STATE (E1 honba=0 riichi=0, all 25000) ===")
+    if e1_identical_rounds == 0:
+        report_lines.append("No matching rounds found in validation slice.")
+    else:
+        avg_actual = (e1_sum_actual_by_seat / float(e1_identical_rounds)).astype(float)
+        canonical_pred = tuple(
+            float(x) for x in predict("E", 1, 0, 0, [25000, 25000, 25000, 25000])
+        )
+
+        report_lines.append(f"Rounds in this exact state: {e1_identical_rounds}")
+        report_lines.append(
+            "Avg ACTUAL EV by seat: "
+            + ", ".join(f"{float(avg_actual[i]):+.3f}" for i in range(4))
+        )
+        report_lines.append(
+            "MODEL prediction for this state (single call): "
+            + ", ".join(f"{float(canonical_pred[i]):+.3f}" for i in range(4))
+        )
+
+    # Per-group report (metrics only; no per-group calibration)
+    report_lines.append("\n\n=== PER-ROUND-STATE BREAKDOWN (METRICS ONLY) ===")
+    report_lines.append(
+        "Groups are keyed by (wind, round_num, honba_bucket<=5, riichi_bucket<=5)."
+    )
+    report_lines.append(
+        "Note: sample counts below are seat-samples; divide by 4 to approximate rounds."
+    )
+
+    for gkey in sorted(group_acc.keys()):
+        ga = group_acc[gkey]
+        g_actual = np.array(ga.actual_evs, dtype=np.float32)
+        g_model = np.array(ga.model_evs, dtype=np.float32)
+
+        report_lines.append("\n" + ("-" * 72))
+        report_lines.append(f"Group: {_format_group_key(gkey)}")
+        report_lines.append(f"Rounds evaluated in group: {ga.rounds}")
+        report_lines.append(f"Seat-samples in group    : {int(g_actual.size)}")
+
+        report_lines.extend(
+            _metrics_block(
+                actual=g_actual,
+                model=g_model,
+                rounds=ga.rounds,
+                skipped_rounds=0,
+                total_sum_model=ga.total_sum_model,
+                sum_model_squares=ga.sum_model_squares,
+                max_abs_sum_model=ga.max_abs_sum_model,
+            )
+        )
+
+    elapsed_s = time.perf_counter() - t0
+
+    report_text = "\n".join(
+        [
+            "=== TIMING ===",
+            f"Total analysis time: {elapsed_s:.2f}s",
+            "",
+            *report_lines,
+            "",
+        ]
+    )
+
+    out_file = _next_available_report_path(out_path)
+    out_file.write_text(report_text, encoding="utf-8")
+
+    print(f"Wrote evaluation report to: {out_file.resolve()} (took {elapsed_s:.2f}s)")
 
     if count_rounds == 0:
-        print("\n=== EV ACCURACY RESULTS ===")
-        print("Rounds evaluated      : 0")
-        print(f"Rounds skipped (W+)   : {skipped_rounds}")
-        print("No rounds to evaluate (check DB / validate split).")
         return {
             "model_mse": float("nan"),
             "model_rmse": float("nan"),
@@ -188,34 +411,16 @@ def evaluate_model_ev(
             "max_abs_sum_model": float("nan"),
             "rounds": 0,
             "skipped_rounds": skipped_rounds,
+            "out_path": str(out_file),
         }
 
-    model_mse = _mse(actual, model)
+    model_mse = _mse(actual, model_arr)
     model_rmse = float(np.sqrt(model_mse))
-    model_mae = float(np.mean(np.abs(actual - model)))
-    model_corr = _safe_corrcoef(actual, model)
+    model_mae = float(np.mean(np.abs(actual - model_arr)))
+    model_corr = _safe_corrcoef(actual, model_arr)
 
     avg_sum_model = total_sum_model / max(count_rounds, 1)
     sum_model_rmse = float(np.sqrt(sum_model_squares / max(count_rounds, 1)))
-
-    print("\n=== EV ACCURACY RESULTS ===")
-    print(f"Rounds evaluated      : {count_rounds}")
-    print(f"Rounds skipped (W+)   : {skipped_rounds}")
-    print(f"Avg sum(model EVs)    : {avg_sum_model:.4f} (should be ~0)")
-    print(f"RMSE(sum model EVs)   : {sum_model_rmse:.4f} (should be small)")
-    print(f"Max |sum model EVs|   : {abs_sum_model_max:.4f}")
-
-    print("\n--- MSE / RMSE (thousands of points² / thousands) ---")
-    print(f"Model MSE             : {model_mse:.4f}")
-    print(f"Model RMSE            : {model_rmse:.4f}")
-    print(f"Model MAE (diagnostic): {model_mae:.4f}")
-
-    print("\n--- Correlation with true EV ---")
-    print(f"Model corr            : {model_corr:.4f}")
-
-    _print_calibration_by_buckets(
-        actual=actual, model=model, buckets=int(calibration_buckets)
-    )
 
     return {
         "model_mse": model_mse,
@@ -227,6 +432,7 @@ def evaluate_model_ev(
         "max_abs_sum_model": abs_sum_model_max,
         "rounds": count_rounds,
         "skipped_rounds": skipped_rounds,
+        "out_path": str(out_file),
     }
 
 
@@ -256,18 +462,24 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=DEFAULT_CALIBRATION_BUCKETS,
         help="Number of quantile buckets for calibration table (0 to disable)",
     )
+    p.add_argument(
+        "--out",
+        default=DEFAULT_OUT_PATH,
+        help="Where to write the full text report",
+    )
     return p.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> dict:
     args = _parse_args(argv)
-    print(f"Using default JSON model: {args.model}")
+    print(f"Using JSON model: {args.model}")
     return evaluate_model_ev(
         db_path=str(args.db),
         model_path=str(args.model),
         validate_split=float(args.validate_split),
         max_rounds=args.max_rounds,
         calibration_buckets=int(args.calibration_buckets),
+        out_path=str(args.out),
     )
 
 
