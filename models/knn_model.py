@@ -64,8 +64,6 @@ def _recenter_zero_sum(evs: np.ndarray) -> np.ndarray:
     shift = float(np.sum(evs)) / 4.0
     return evs - shift
 
-
-@dataclass(frozen=True)
 class KNNWeights:
     w_wind: float = 1.0
     w_round: float = 1.0

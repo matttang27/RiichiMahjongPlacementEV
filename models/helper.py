@@ -10,6 +10,7 @@ def _get_round_count(db_path: str) -> int:
         return int(cur.fetchone()[0])
     finally:
         conn.close()
+        
 
 def compute_uma(final_scores, uma_scheme=UMA):
     """
