@@ -79,7 +79,8 @@ def init_dest_db(path: str):
     score_cols = ",\n            ".join(
         [f"s{i}_start INTEGER NOT NULL" for i in range(1, 5)]
         + [f"s{i}_final INTEGER NOT NULL" for i in range(1, 5)]
-        + [f"s{i}_y_residual INTEGER" for i in range(1, 5)]
+        + [f"s{i}_start_s INTEGER" for i in range(1, 5)]
+        + [f"s{i}_final_s INTEGER" for i in range(1, 5)]
         + [f"s{i}_place INTEGER" for i in range(1, 5)]
     )
 
@@ -138,33 +139,23 @@ def process_zip(zip_path: str, dest_conn, existing_log_ids):
             for r in rows:
                 s_start = r["s_start"]
                 s_final = r["s_final"]
-
-                y_residuals = [None, None, None, None]
                 placements = [None, None, None, None]
-                if r["wind"] in ("E", "S"):
-                    placement_to_uma_th = lambda p: [90, 45, 0, -135][p - 1]
+                placement_to_uma = lambda p: [90, 45, 0, -135][p - 1]
 
-                    start_places = compute_placements(s_start)
-                    final_places = compute_placements(s_final)
+                start_places = compute_placements(s_start)
+                final_places = compute_placements(s_final)
 
-                    start_uma_th = [placement_to_uma_th(p) for p in start_places]
-                    final_uma_th = [placement_to_uma_th(p) for p in final_places]
-
-                    # Residual in points (integer): 1000 * (thousands-residual)
-                    # = (final_score + final_uma_pts) - (start_score + start_uma_pts)
-                    y_residuals = [
-                        int((s_final[i] + final_uma_th[i] * 1000) - (s_start[i] + start_uma_th[i] * 1000))
-                        for i in range(4)
-                    ]
-                    placements = final_places
-
+                placements = final_places
+                s_start_s = [s_start[i] - 25000 + placement_to_uma(start_places[i]) * 1000 for i in range(4)]
+                s_final_s = [s_final[i] - 25000 + placement_to_uma(final_places[i]) * 1000 for i in range(4)]
                 dest_cur.execute(
                     """
                     INSERT OR IGNORE INTO rounds (
                         round_key, log_id, wind, round, honba, riichi,
                         s1_start, s2_start, s3_start, s4_start,
                         s1_final, s2_final, s3_final, s4_final,
-                        s1_y_residual, s2_y_residual, s3_y_residual, s4_y_residual,
+                        s1_start_s, s2_start_s, s3_start_s, s4_start_s,
+                        s1_final_s, s2_final_s, s3_final_s, s4_final_s,
                         s1_place, s2_place, s3_place, s4_place
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
@@ -177,7 +168,8 @@ def process_zip(zip_path: str, dest_conn, existing_log_ids):
                         r["riichi"],
                         *s_start,
                         *s_final,
-                        *y_residuals,
+                        *s_start_s,
+                        *s_final_s,
                         *placements,
                     ),
                 )
