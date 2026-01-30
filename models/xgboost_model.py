@@ -7,7 +7,8 @@ import numpy as np
 import xgboost as xgb
 
 ROUNDS_DB_PATH = "data/rounds.db"
-MODEL_PATH = "xgboost.json"
+# Keep model path relative to this module so it works in deployments.
+MODEL_PATH = Path(__file__).resolve().parent / "xgboost.json"
 
 from .helper import compute_uma
 
@@ -185,15 +186,15 @@ def train_model(X: np.ndarray, y: np.ndarray) -> xgb.XGBRegressor:
     return model
 
 
-def save_model(model: xgb.XGBRegressor, path: str = MODEL_PATH):
+def save_model(model: xgb.XGBRegressor, path: str | Path = MODEL_PATH):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    model.save_model(path)
+    model.save_model(str(path))
     print(f"Saved model to {path}")
 
 
-def load_model(path: str = MODEL_PATH) -> xgb.XGBRegressor:
+def load_model(path: str | Path = MODEL_PATH) -> xgb.XGBRegressor:
     model = xgb.XGBRegressor()
-    model.load_model(path)
+    model.load_model(str(path))
     return model
 
 
