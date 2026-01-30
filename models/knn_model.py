@@ -82,7 +82,7 @@ class KNNWeights:
 
 
 class KNNModel:
-    """Simple KNN regressor over round-start states.
+    """Simplest KNN formula
 
     Training rows are *round states* (one per kyoku start), with a 4-vector label
     containing per-seat realized EV.
