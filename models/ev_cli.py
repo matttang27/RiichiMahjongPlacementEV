@@ -1,7 +1,10 @@
 import argparse
 from typing import List, Tuple
 
-from .xgboost_model import estimate_all_values, load_model  # relative import
+try:
+    from .xgboost_model import MODEL_PATH, estimate_all_values, load_model
+except ImportError:  # Allows `python models/ev_cli.py`.
+    from xgboost_model import MODEL_PATH, estimate_all_values, load_model
 
 
 def _parse_input(line: str) -> Tuple[str, int, int, int, List[int]]:
@@ -31,7 +34,7 @@ def _parse_input(line: str) -> Tuple[str, int, int, int, List[int]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Interactive EV predictor")
-    ap.add_argument("--model", default="models/xgboost.json", help="Path to XGBoost JSON model")
+    ap.add_argument("--model", default=str(MODEL_PATH), help="Path to XGBoost JSON model")
     args = ap.parse_args()
 
     model = load_model(args.model)

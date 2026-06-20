@@ -1,16 +1,24 @@
-# ev_model.py
+"""XGBoost EV model training and inference."""
 
+import argparse
 import sqlite3
+from collections.abc import Sequence
 from pathlib import Path
 
 import numpy as np
 import xgboost as xgb
 
-ROUNDS_DB_PATH = "data/rounds.db"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+ROUNDS_DB_PATH = REPO_ROOT / "data" / "rounds.db"
 # Keep model path relative to this module so it works in deployments.
 MODEL_PATH = Path(__file__).resolve().parent / "xgboost.json"
 
-from .helper import compute_uma
+try:
+    from .helper import compute_uma
+except ImportError:  # Allows `python models/xgboost_model.py`.
+    from helper import compute_uma
+
+SUPPORTED_WINDS = {"E", "S", 0, 1}
 
 
 # ---------- Feature encoding ----------
@@ -69,7 +77,7 @@ def _encode_state_row(
 
 # ---------- Dataset building from rounds.db ----------
 
-def build_training_matrix(db_path: str = ROUNDS_DB_PATH, max_rows: int | None = None):
+def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | None = None):
     """
     Read rounds from SQLite and build (X, y):
 
@@ -82,77 +90,78 @@ def build_training_matrix(db_path: str = ROUNDS_DB_PATH, max_rows: int | None = 
         = residual over the "no change" baseline, in thousands.
     """
     conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
 
-    cur.execute(
-        """
-        SELECT wind, round, honba, riichi,
-               s1_start, s2_start, s3_start, s4_start,
-               s1_final, s2_final, s3_final, s4_final
-        FROM rounds
-        """
-    )
+        cur.execute(
+            """
+            SELECT wind, round, honba, riichi,
+                   s1_start, s2_start, s3_start, s4_start,
+                   s1_final, s2_final, s3_final, s4_final
+            FROM rounds
+            """
+        )
 
-    X_rows: list[np.ndarray] = []
-    y_vals: list[float] = []
+        X_rows: list[np.ndarray] = []
+        y_vals: list[float] = []
 
-    count_rows = 0
+        count_rows = 0
 
-    while True:
-        row = cur.fetchone()
-        if row is None:
-            break
+        while True:
+            row = cur.fetchone()
+            if row is None:
+                break
 
-        wind = row[0]
-        round_num = int(row[1])
-        honba = int(row[2])
-        riichi = int(row[3])
+            wind = row[0]
+            round_num = int(row[1])
+            honba = int(row[2])
+            riichi = int(row[3])
 
-        # Skip West rounds for simplicity (continuation hands)
-        if wind not in ("E", "S"):
-            continue
+            # Skip West rounds for simplicity (continuation hands)
+            if wind not in SUPPORTED_WINDS:
+                continue
 
-        s_start_pts = list(row[4:8])
-        s_final_pts = list(row[8:12])
+            s_start_pts = list(row[4:8])
+            s_final_pts = list(row[8:12])
 
-        # Convert start scores to thousands for features
-        scores_thousands = [s / 1000.0 for s in s_start_pts]
+            # Convert start scores to thousands for features
+            scores_thousands = [s / 1000.0 for s in s_start_pts]
 
-        # Uma based on start + final
-        start_uma_pts = compute_uma(s_start_pts)
-        final_uma_pts = compute_uma(s_final_pts)
+            # Uma based on start + final
+            start_uma_pts = compute_uma(s_start_pts)
+            final_uma_pts = compute_uma(s_final_pts)
 
-        for seat in range(4):
-            x = _encode_state_row(
-                wind=wind,
-                round_num=round_num,
-                honba=honba,
-                riichi=riichi,
-                scores_thousands=scores_thousands,
-                seat=seat,
-            )
+            for seat in range(4):
+                x = _encode_state_row(
+                    wind=wind,
+                    round_num=round_num,
+                    honba=honba,
+                    riichi=riichi,
+                    scores_thousands=scores_thousands,
+                    seat=seat,
+                )
 
-            # Baseline: "no change" EV target in thousands
-            baseline_thousands = (
-                s_start_pts[seat] + start_uma_pts[seat]
-            ) / 1000.0
+                # Baseline: "no change" EV target in thousands
+                baseline_thousands = (
+                    s_start_pts[seat] + start_uma_pts[seat]
+                ) / 1000.0
 
-            # True final target in thousands
-            target_thousands = (
-                s_final_pts[seat] + final_uma_pts[seat]
-            ) / 1000.0
+                # True final target in thousands
+                target_thousands = (
+                    s_final_pts[seat] + final_uma_pts[seat]
+                ) / 1000.0
 
-            # Residual over baseline
-            y_residual = target_thousands - baseline_thousands
+                # Residual over baseline
+                y_residual = target_thousands - baseline_thousands
 
-            X_rows.append(x[0])
-            y_vals.append(y_residual)
+                X_rows.append(x[0])
+                y_vals.append(y_residual)
 
-        count_rows += 1
-        if max_rows is not None and count_rows >= max_rows:
-            break
-
-    conn.close()
+            count_rows += 1
+            if max_rows is not None and count_rows >= max_rows:
+                break
+    finally:
+        conn.close()
 
     if not X_rows:
         raise RuntimeError("No data loaded from rounds.db. Is the table empty?")
@@ -309,15 +318,25 @@ def estimate_all_values(
 
 # ---------- Script entrypoint ----------
 
-def main():
-    print("Building training matrix from rounds.db...")
-    X, y = build_training_matrix(ROUNDS_DB_PATH)
+def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Train the XGBoost EV model")
+    p.add_argument("--db", default=str(ROUNDS_DB_PATH), help="Path to rounds.db")
+    p.add_argument("--model", default=str(MODEL_PATH), help="Where to save the XGBoost JSON model")
+    p.add_argument("--max-rows", type=int, default=None, help="Optional cap for quick training smoke tests")
+    return p.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None):
+    args = _parse_args(argv)
+
+    print(f"Building training matrix from {args.db}...")
+    X, y = build_training_matrix(args.db, max_rows=args.max_rows)
 
     print("Training model...")
     model = train_model(X, y)
 
     print("Saving model...")
-    save_model(model, MODEL_PATH)
+    save_model(model, args.model)
 
     # Tiny sanity check example (you can delete this later):
     ex_vals = estimate_all_values(

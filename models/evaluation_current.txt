@@ -1,0 +1,4178 @@
+=== TIMING ===
+Total analysis time: 378.95s
+
+Using model: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\models\xgboost.json
+DB: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\data\rounds.db
+Validate split (last N%): 0.1
+Max rounds cap: None
+Calibration buckets: 20
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 147357
+Rounds skipped (W+)   : 817
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6224.7852
+Model RMSE            : 78.8973
+Model MAE (diagnostic): 60.6755
+
+--- Correlation with true EV ---
+Model corr            : 0.5780
+
+--- Calibration by predicted-EV buckets (primary check) ---
+bucket	count	mean_pred	mean_actual	diff
+01	29472	-129.542		-125.816		+3.727
+02	29472	-96.544		-90.811		+5.733
+03	29472	-72.340		-65.678		+6.661
+04	29472	-50.647		-48.304		+2.343
+05	29472	-35.452		-34.925		+0.526
+06	29472	-24.451		-24.501		-0.049
+07	29472	-15.875		-15.656		+0.219
+08	29472	-8.422		-7.443		+0.979
+09	29471	-1.900		-3.264		-1.364
+10	29471	-0.095		-0.897		-0.802
+11	29471	+0.612		+0.079		-0.533
+12	29471	+5.631		+3.365		-2.266
+13	29471	+13.320		+10.162		-3.158
+14	29471	+22.836		+19.935		-2.901
+15	29471	+32.920		+30.329		-2.591
+16	29471	+43.614		+41.288		-2.326
+17	29471	+54.857		+52.881		-1.976
+18	29471	+68.654		+67.401		-1.253
+19	29471	+85.612		+84.930		-0.682
+20	29471	+107.227		+106.688		-0.539
+Avg abs diff over all buckets: +2.031 - note this changes with #buckets
+
+
+=== SPECIAL CHECK: IDENTICAL START STATE (E1 honba=0 riichi=0, all 25000) ===
+Rounds in this exact state: 13960
+Avg ACTUAL EV by seat: +1.763, -0.612, -0.917, -0.281
+MODEL prediction for this state (single call): +0.417, -0.447, +0.130, -0.100
+
+
+=== PER-ROUND-STATE BREAKDOWN (METRICS ONLY) ===
+Groups are keyed by (wind, round_num, honba_bucket<=5, riichi_bucket<=5).
+Note: sample counts below are seat-samples; divide by 4 to approximate rounds.
+
+------------------------------------------------------------------------
+Group: E1 honba=0 riichi=0
+Rounds evaluated in group: 13960
+Seat-samples in group    : 55840
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 13960
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9393.3447
+Model RMSE            : 96.9193
+Model MAE (diagnostic): 78.8851
+
+--- Correlation with true EV ---
+Model corr            : 0.0075
+
+------------------------------------------------------------------------
+Group: E1 honba=1 riichi=0
+Rounds evaluated in group: 3814
+Seat-samples in group    : 15256
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3814
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8594.0693
+Model RMSE            : 92.7042
+Model MAE (diagnostic): 75.8229
+
+--- Correlation with true EV ---
+Model corr            : 0.3145
+
+------------------------------------------------------------------------
+Group: E1 honba=1 riichi=1
+Rounds evaluated in group: 627
+Seat-samples in group    : 2508
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 627
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9395.5801
+Model RMSE            : 96.9308
+Model MAE (diagnostic): 79.6287
+
+--- Correlation with true EV ---
+Model corr            : 0.0568
+
+------------------------------------------------------------------------
+Group: E1 honba=1 riichi=2
+Rounds evaluated in group: 179
+Seat-samples in group    : 716
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 179
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9213.4287
+Model RMSE            : 95.9866
+Model MAE (diagnostic): 78.7383
+
+--- Correlation with true EV ---
+Model corr            : 0.1438
+
+------------------------------------------------------------------------
+Group: E1 honba=1 riichi=3
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 11375.3506
+Model RMSE            : 106.6553
+Model MAE (diagnostic): 86.5245
+
+--- Correlation with true EV ---
+Model corr            : -0.2721
+
+------------------------------------------------------------------------
+Group: E1 honba=1 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 11496.0908
+Model RMSE            : 107.2198
+Model MAE (diagnostic): 90.5709
+
+--- Correlation with true EV ---
+Model corr            : -0.3107
+
+------------------------------------------------------------------------
+Group: E1 honba=2 riichi=0
+Rounds evaluated in group: 1197
+Seat-samples in group    : 4788
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1197
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7718.5088
+Model RMSE            : 87.8550
+Model MAE (diagnostic): 70.7429
+
+--- Correlation with true EV ---
+Model corr            : 0.4597
+
+------------------------------------------------------------------------
+Group: E1 honba=2 riichi=1
+Rounds evaluated in group: 181
+Seat-samples in group    : 724
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 181
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8977.7500
+Model RMSE            : 94.7510
+Model MAE (diagnostic): 77.7295
+
+--- Correlation with true EV ---
+Model corr            : 0.2833
+
+------------------------------------------------------------------------
+Group: E1 honba=2 riichi=2
+Rounds evaluated in group: 75
+Seat-samples in group    : 300
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 75
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8894.0664
+Model RMSE            : 94.3084
+Model MAE (diagnostic): 78.4634
+
+--- Correlation with true EV ---
+Model corr            : 0.2226
+
+------------------------------------------------------------------------
+Group: E1 honba=2 riichi=3
+Rounds evaluated in group: 16
+Seat-samples in group    : 64
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 16
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 10825.2861
+Model RMSE            : 104.0446
+Model MAE (diagnostic): 85.8944
+
+--- Correlation with true EV ---
+Model corr            : -0.1475
+
+------------------------------------------------------------------------
+Group: E1 honba=2 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 11843.6035
+Model RMSE            : 108.8283
+Model MAE (diagnostic): 87.2766
+
+--- Correlation with true EV ---
+Model corr            : -0.0534
+
+------------------------------------------------------------------------
+Group: E1 honba=3 riichi=0
+Rounds evaluated in group: 366
+Seat-samples in group    : 1464
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 366
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6968.3687
+Model RMSE            : 83.4768
+Model MAE (diagnostic): 65.6828
+
+--- Correlation with true EV ---
+Model corr            : 0.5579
+
+------------------------------------------------------------------------
+Group: E1 honba=3 riichi=1
+Rounds evaluated in group: 52
+Seat-samples in group    : 208
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 52
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8535.7803
+Model RMSE            : 92.3893
+Model MAE (diagnostic): 74.6909
+
+--- Correlation with true EV ---
+Model corr            : 0.3735
+
+------------------------------------------------------------------------
+Group: E1 honba=3 riichi=2
+Rounds evaluated in group: 20
+Seat-samples in group    : 80
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 20
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8677.3066
+Model RMSE            : 93.1521
+Model MAE (diagnostic): 72.9621
+
+--- Correlation with true EV ---
+Model corr            : 0.3601
+
+------------------------------------------------------------------------
+Group: E1 honba=3 riichi=3
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9682.0664
+Model RMSE            : 98.3975
+Model MAE (diagnostic): 80.4403
+
+--- Correlation with true EV ---
+Model corr            : 0.3169
+
+------------------------------------------------------------------------
+Group: E1 honba=3 riichi=4
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9025.6641
+Model RMSE            : 95.0035
+Model MAE (diagnostic): 80.1784
+
+--- Correlation with true EV ---
+Model corr            : 0.3904
+
+------------------------------------------------------------------------
+Group: E1 honba=4 riichi=0
+Rounds evaluated in group: 101
+Seat-samples in group    : 404
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 101
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6563.7563
+Model RMSE            : 81.0170
+Model MAE (diagnostic): 63.3212
+
+--- Correlation with true EV ---
+Model corr            : 0.6148
+
+------------------------------------------------------------------------
+Group: E1 honba=4 riichi=1
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8003.7368
+Model RMSE            : 89.4636
+Model MAE (diagnostic): 71.7126
+
+--- Correlation with true EV ---
+Model corr            : 0.4776
+
+------------------------------------------------------------------------
+Group: E1 honba=4 riichi=2
+Rounds evaluated in group: 6
+Seat-samples in group    : 24
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 6
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8018.9883
+Model RMSE            : 89.5488
+Model MAE (diagnostic): 69.4080
+
+--- Correlation with true EV ---
+Model corr            : 0.4942
+
+------------------------------------------------------------------------
+Group: E1 honba=4 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9298.6621
+Model RMSE            : 96.4296
+Model MAE (diagnostic): 83.8386
+
+--- Correlation with true EV ---
+Model corr            : 0.3372
+
+------------------------------------------------------------------------
+Group: E1 honba=4 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 10211.7715
+Model RMSE            : 101.0533
+Model MAE (diagnostic): 81.6609
+
+--- Correlation with true EV ---
+Model corr            : 0.0759
+
+------------------------------------------------------------------------
+Group: E1 honba=5 riichi=0
+Rounds evaluated in group: 30
+Seat-samples in group    : 120
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 30
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6239.7974
+Model RMSE            : 78.9924
+Model MAE (diagnostic): 63.4757
+
+--- Correlation with true EV ---
+Model corr            : 0.6498
+
+------------------------------------------------------------------------
+Group: E1 honba=5 riichi=1
+Rounds evaluated in group: 8
+Seat-samples in group    : 32
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 8
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8066.4834
+Model RMSE            : 89.8136
+Model MAE (diagnostic): 67.8755
+
+--- Correlation with true EV ---
+Model corr            : 0.5104
+
+------------------------------------------------------------------------
+Group: E1 honba=5 riichi=2
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3242.0688
+Model RMSE            : 56.9392
+Model MAE (diagnostic): 44.7977
+
+--- Correlation with true EV ---
+Model corr            : 0.8278
+
+------------------------------------------------------------------------
+Group: E1 honba=5 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 15524.9883
+Model RMSE            : 124.5993
+Model MAE (diagnostic): 93.0375
+
+--- Correlation with true EV ---
+Model corr            : -0.5717
+
+------------------------------------------------------------------------
+Group: E2 honba=0 riichi=0
+Rounds evaluated in group: 12607
+Seat-samples in group    : 50428
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 12607
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8525.0508
+Model RMSE            : 92.3312
+Model MAE (diagnostic): 75.4276
+
+--- Correlation with true EV ---
+Model corr            : 0.3064
+
+------------------------------------------------------------------------
+Group: E2 honba=1 riichi=0
+Rounds evaluated in group: 3648
+Seat-samples in group    : 14592
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3648
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7939.2544
+Model RMSE            : 89.1025
+Model MAE (diagnostic): 72.2130
+
+--- Correlation with true EV ---
+Model corr            : 0.4108
+
+------------------------------------------------------------------------
+Group: E2 honba=1 riichi=1
+Rounds evaluated in group: 1078
+Seat-samples in group    : 4312
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1078
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8915.2871
+Model RMSE            : 94.4208
+Model MAE (diagnostic): 77.5450
+
+--- Correlation with true EV ---
+Model corr            : 0.2289
+
+------------------------------------------------------------------------
+Group: E2 honba=1 riichi=2
+Rounds evaluated in group: 235
+Seat-samples in group    : 940
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 235
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8988.9092
+Model RMSE            : 94.8099
+Model MAE (diagnostic): 77.7799
+
+--- Correlation with true EV ---
+Model corr            : 0.2233
+
+------------------------------------------------------------------------
+Group: E2 honba=1 riichi=3
+Rounds evaluated in group: 8
+Seat-samples in group    : 32
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 8
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7977.2993
+Model RMSE            : 89.3157
+Model MAE (diagnostic): 73.6229
+
+--- Correlation with true EV ---
+Model corr            : 0.4166
+
+------------------------------------------------------------------------
+Group: E2 honba=1 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7332.7300
+Model RMSE            : 85.6314
+Model MAE (diagnostic): 67.5590
+
+--- Correlation with true EV ---
+Model corr            : 0.2912
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=0
+Rounds evaluated in group: 1279
+Seat-samples in group    : 5116
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1279
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7360.3325
+Model RMSE            : 85.7924
+Model MAE (diagnostic): 68.6413
+
+--- Correlation with true EV ---
+Model corr            : 0.4959
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=1
+Rounds evaluated in group: 372
+Seat-samples in group    : 1488
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 372
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8169.4502
+Model RMSE            : 90.3850
+Model MAE (diagnostic): 73.6591
+
+--- Correlation with true EV ---
+Model corr            : 0.3703
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=2
+Rounds evaluated in group: 160
+Seat-samples in group    : 640
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 160
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8980.9668
+Model RMSE            : 94.7680
+Model MAE (diagnostic): 77.6273
+
+--- Correlation with true EV ---
+Model corr            : 0.2369
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=3
+Rounds evaluated in group: 36
+Seat-samples in group    : 144
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 36
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8253.8643
+Model RMSE            : 90.8508
+Model MAE (diagnostic): 75.0438
+
+--- Correlation with true EV ---
+Model corr            : 0.3383
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 11349.4990
+Model RMSE            : 106.5340
+Model MAE (diagnostic): 90.0959
+
+--- Correlation with true EV ---
+Model corr            : -0.2293
+
+------------------------------------------------------------------------
+Group: E2 honba=2 riichi=5
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 15843.4346
+Model RMSE            : 125.8707
+Model MAE (diagnostic): 103.7635
+
+--- Correlation with true EV ---
+Model corr            : -0.4750
+
+------------------------------------------------------------------------
+Group: E2 honba=3 riichi=0
+Rounds evaluated in group: 488
+Seat-samples in group    : 1952
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 488
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6651.1885
+Model RMSE            : 81.5548
+Model MAE (diagnostic): 64.1083
+
+--- Correlation with true EV ---
+Model corr            : 0.5720
+
+------------------------------------------------------------------------
+Group: E2 honba=3 riichi=1
+Rounds evaluated in group: 126
+Seat-samples in group    : 504
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 126
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7907.3452
+Model RMSE            : 88.9233
+Model MAE (diagnostic): 71.1022
+
+--- Correlation with true EV ---
+Model corr            : 0.4467
+
+------------------------------------------------------------------------
+Group: E2 honba=3 riichi=2
+Rounds evaluated in group: 57
+Seat-samples in group    : 228
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 57
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8071.6714
+Model RMSE            : 89.8425
+Model MAE (diagnostic): 73.5505
+
+--- Correlation with true EV ---
+Model corr            : 0.3748
+
+------------------------------------------------------------------------
+Group: E2 honba=3 riichi=3
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9243.9404
+Model RMSE            : 96.1454
+Model MAE (diagnostic): 78.6895
+
+--- Correlation with true EV ---
+Model corr            : 0.1587
+
+------------------------------------------------------------------------
+Group: E2 honba=3 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7565.8096
+Model RMSE            : 86.9817
+Model MAE (diagnostic): 72.2564
+
+--- Correlation with true EV ---
+Model corr            : 0.4844
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=0
+Rounds evaluated in group: 160
+Seat-samples in group    : 640
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 160
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6336.4932
+Model RMSE            : 79.6021
+Model MAE (diagnostic): 61.4919
+
+--- Correlation with true EV ---
+Model corr            : 0.6092
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=1
+Rounds evaluated in group: 41
+Seat-samples in group    : 164
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 41
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7003.6821
+Model RMSE            : 83.6880
+Model MAE (diagnostic): 64.6455
+
+--- Correlation with true EV ---
+Model corr            : 0.5718
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=2
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5973.3428
+Model RMSE            : 77.2874
+Model MAE (diagnostic): 63.3017
+
+--- Correlation with true EV ---
+Model corr            : 0.6292
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=3
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9999.3428
+Model RMSE            : 99.9967
+Model MAE (diagnostic): 87.1405
+
+--- Correlation with true EV ---
+Model corr            : 0.0205
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 12271.9629
+Model RMSE            : 110.7789
+Model MAE (diagnostic): 90.9013
+
+--- Correlation with true EV ---
+Model corr            : -0.2656
+
+------------------------------------------------------------------------
+Group: E2 honba=4 riichi=5
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8309.3955
+Model RMSE            : 91.1559
+Model MAE (diagnostic): 81.4137
+
+--- Correlation with true EV ---
+Model corr            : 0.6048
+
+------------------------------------------------------------------------
+Group: E2 honba=5 riichi=0
+Rounds evaluated in group: 72
+Seat-samples in group    : 288
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 72
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5964.5562
+Model RMSE            : 77.2305
+Model MAE (diagnostic): 58.7989
+
+--- Correlation with true EV ---
+Model corr            : 0.6473
+
+------------------------------------------------------------------------
+Group: E2 honba=5 riichi=1
+Rounds evaluated in group: 25
+Seat-samples in group    : 100
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 25
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7700.1274
+Model RMSE            : 87.7504
+Model MAE (diagnostic): 69.6524
+
+--- Correlation with true EV ---
+Model corr            : 0.5174
+
+------------------------------------------------------------------------
+Group: E2 honba=5 riichi=2
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6906.8652
+Model RMSE            : 83.1076
+Model MAE (diagnostic): 66.9735
+
+--- Correlation with true EV ---
+Model corr            : 0.6328
+
+------------------------------------------------------------------------
+Group: E2 honba=5 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6117.7812
+Model RMSE            : 78.2162
+Model MAE (diagnostic): 65.4681
+
+--- Correlation with true EV ---
+Model corr            : 0.6694
+
+------------------------------------------------------------------------
+Group: E2 honba=5 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6429.9619
+Model RMSE            : 80.1870
+Model MAE (diagnostic): 69.2915
+
+--- Correlation with true EV ---
+Model corr            : 0.6031
+
+------------------------------------------------------------------------
+Group: E3 honba=0 riichi=0
+Rounds evaluated in group: 12466
+Seat-samples in group    : 49864
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 12466
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7642.2812
+Model RMSE            : 87.4201
+Model MAE (diagnostic): 70.6310
+
+--- Correlation with true EV ---
+Model corr            : 0.4319
+
+------------------------------------------------------------------------
+Group: E3 honba=1 riichi=0
+Rounds evaluated in group: 3394
+Seat-samples in group    : 13576
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3394
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7135.0283
+Model RMSE            : 84.4691
+Model MAE (diagnostic): 67.7544
+
+--- Correlation with true EV ---
+Model corr            : 0.5014
+
+------------------------------------------------------------------------
+Group: E3 honba=1 riichi=1
+Rounds evaluated in group: 1014
+Seat-samples in group    : 4056
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1014
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7916.4561
+Model RMSE            : 88.9745
+Model MAE (diagnostic): 72.1075
+
+--- Correlation with true EV ---
+Model corr            : 0.3930
+
+------------------------------------------------------------------------
+Group: E3 honba=1 riichi=2
+Rounds evaluated in group: 198
+Seat-samples in group    : 792
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 198
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7811.2515
+Model RMSE            : 88.3813
+Model MAE (diagnostic): 72.3155
+
+--- Correlation with true EV ---
+Model corr            : 0.4131
+
+------------------------------------------------------------------------
+Group: E3 honba=1 riichi=3
+Rounds evaluated in group: 8
+Seat-samples in group    : 32
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 8
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7681.4863
+Model RMSE            : 87.6441
+Model MAE (diagnostic): 70.7438
+
+--- Correlation with true EV ---
+Model corr            : 0.4767
+
+------------------------------------------------------------------------
+Group: E3 honba=1 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8321.9590
+Model RMSE            : 91.2248
+Model MAE (diagnostic): 76.4801
+
+--- Correlation with true EV ---
+Model corr            : 0.2417
+
+------------------------------------------------------------------------
+Group: E3 honba=2 riichi=0
+Rounds evaluated in group: 1188
+Seat-samples in group    : 4752
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1188
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6651.7124
+Model RMSE            : 81.5580
+Model MAE (diagnostic): 64.5446
+
+--- Correlation with true EV ---
+Model corr            : 0.5609
+
+------------------------------------------------------------------------
+Group: E3 honba=2 riichi=1
+Rounds evaluated in group: 357
+Seat-samples in group    : 1428
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 357
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7824.3770
+Model RMSE            : 88.4555
+Model MAE (diagnostic): 71.4490
+
+--- Correlation with true EV ---
+Model corr            : 0.4183
+
+------------------------------------------------------------------------
+Group: E3 honba=2 riichi=2
+Rounds evaluated in group: 161
+Seat-samples in group    : 644
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 161
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7622.7051
+Model RMSE            : 87.3081
+Model MAE (diagnostic): 71.1388
+
+--- Correlation with true EV ---
+Model corr            : 0.4377
+
+------------------------------------------------------------------------
+Group: E3 honba=2 riichi=3
+Rounds evaluated in group: 32
+Seat-samples in group    : 128
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 32
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7554.1396
+Model RMSE            : 86.9146
+Model MAE (diagnostic): 69.7784
+
+--- Correlation with true EV ---
+Model corr            : 0.4117
+
+------------------------------------------------------------------------
+Group: E3 honba=2 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6129.1025
+Model RMSE            : 78.2886
+Model MAE (diagnostic): 59.1234
+
+--- Correlation with true EV ---
+Model corr            : 0.6432
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=0
+Rounds evaluated in group: 461
+Seat-samples in group    : 1844
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 461
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5573.5718
+Model RMSE            : 74.6564
+Model MAE (diagnostic): 58.4835
+
+--- Correlation with true EV ---
+Model corr            : 0.6601
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=1
+Rounds evaluated in group: 128
+Seat-samples in group    : 512
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 128
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7232.5112
+Model RMSE            : 85.0442
+Model MAE (diagnostic): 69.1683
+
+--- Correlation with true EV ---
+Model corr            : 0.4987
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=2
+Rounds evaluated in group: 53
+Seat-samples in group    : 212
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 53
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7105.6885
+Model RMSE            : 84.2952
+Model MAE (diagnostic): 69.6772
+
+--- Correlation with true EV ---
+Model corr            : 0.5110
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=3
+Rounds evaluated in group: 21
+Seat-samples in group    : 84
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 21
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8132.3462
+Model RMSE            : 90.1795
+Model MAE (diagnostic): 73.0328
+
+--- Correlation with true EV ---
+Model corr            : 0.3513
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7253.3018
+Model RMSE            : 85.1663
+Model MAE (diagnostic): 71.4154
+
+--- Correlation with true EV ---
+Model corr            : 0.9807
+
+------------------------------------------------------------------------
+Group: E3 honba=3 riichi=5
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 12280.9404
+Model RMSE            : 110.8194
+Model MAE (diagnostic): 91.8795
+
+--- Correlation with true EV ---
+Model corr            : -0.7995
+
+------------------------------------------------------------------------
+Group: E3 honba=4 riichi=0
+Rounds evaluated in group: 161
+Seat-samples in group    : 644
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 161
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5570.2617
+Model RMSE            : 74.6342
+Model MAE (diagnostic): 58.2373
+
+--- Correlation with true EV ---
+Model corr            : 0.6635
+
+------------------------------------------------------------------------
+Group: E3 honba=4 riichi=1
+Rounds evaluated in group: 53
+Seat-samples in group    : 212
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 53
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7549.5918
+Model RMSE            : 86.8884
+Model MAE (diagnostic): 67.8345
+
+--- Correlation with true EV ---
+Model corr            : 0.5115
+
+------------------------------------------------------------------------
+Group: E3 honba=4 riichi=2
+Rounds evaluated in group: 19
+Seat-samples in group    : 76
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 19
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6509.9585
+Model RMSE            : 80.6843
+Model MAE (diagnostic): 67.1697
+
+--- Correlation with true EV ---
+Model corr            : 0.5545
+
+------------------------------------------------------------------------
+Group: E3 honba=4 riichi=3
+Rounds evaluated in group: 5
+Seat-samples in group    : 20
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 5
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7542.1875
+Model RMSE            : 86.8458
+Model MAE (diagnostic): 74.8542
+
+--- Correlation with true EV ---
+Model corr            : 0.4847
+
+------------------------------------------------------------------------
+Group: E3 honba=4 riichi=5
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9353.9600
+Model RMSE            : 96.7159
+Model MAE (diagnostic): 81.2965
+
+--- Correlation with true EV ---
+Model corr            : 0.1705
+
+------------------------------------------------------------------------
+Group: E3 honba=5 riichi=0
+Rounds evaluated in group: 83
+Seat-samples in group    : 332
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 83
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5171.1763
+Model RMSE            : 71.9109
+Model MAE (diagnostic): 55.5541
+
+--- Correlation with true EV ---
+Model corr            : 0.7030
+
+------------------------------------------------------------------------
+Group: E3 honba=5 riichi=1
+Rounds evaluated in group: 18
+Seat-samples in group    : 72
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 18
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5701.0889
+Model RMSE            : 75.5056
+Model MAE (diagnostic): 53.0236
+
+--- Correlation with true EV ---
+Model corr            : 0.6579
+
+------------------------------------------------------------------------
+Group: E3 honba=5 riichi=2
+Rounds evaluated in group: 11
+Seat-samples in group    : 44
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 11
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5616.0332
+Model RMSE            : 74.9402
+Model MAE (diagnostic): 59.1448
+
+--- Correlation with true EV ---
+Model corr            : 0.6791
+
+------------------------------------------------------------------------
+Group: E3 honba=5 riichi=3
+Rounds evaluated in group: 5
+Seat-samples in group    : 20
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 5
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9344.0693
+Model RMSE            : 96.6647
+Model MAE (diagnostic): 81.9885
+
+--- Correlation with true EV ---
+Model corr            : 0.4046
+
+------------------------------------------------------------------------
+Group: E3 honba=5 riichi=5
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6581.4028
+Model RMSE            : 81.1258
+Model MAE (diagnostic): 69.5685
+
+--- Correlation with true EV ---
+Model corr            : 0.6266
+
+------------------------------------------------------------------------
+Group: E4 honba=0 riichi=0
+Rounds evaluated in group: 12120
+Seat-samples in group    : 48480
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 12120
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6683.2002
+Model RMSE            : 81.7508
+Model MAE (diagnostic): 65.0933
+
+--- Correlation with true EV ---
+Model corr            : 0.5341
+
+------------------------------------------------------------------------
+Group: E4 honba=1 riichi=0
+Rounds evaluated in group: 3371
+Seat-samples in group    : 13484
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3371
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6078.5137
+Model RMSE            : 77.9648
+Model MAE (diagnostic): 61.3817
+
+--- Correlation with true EV ---
+Model corr            : 0.5985
+
+------------------------------------------------------------------------
+Group: E4 honba=1 riichi=1
+Rounds evaluated in group: 1059
+Seat-samples in group    : 4236
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1059
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6873.4292
+Model RMSE            : 82.9061
+Model MAE (diagnostic): 66.6939
+
+--- Correlation with true EV ---
+Model corr            : 0.5087
+
+------------------------------------------------------------------------
+Group: E4 honba=1 riichi=2
+Rounds evaluated in group: 216
+Seat-samples in group    : 864
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 216
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7005.0728
+Model RMSE            : 83.6963
+Model MAE (diagnostic): 66.6249
+
+--- Correlation with true EV ---
+Model corr            : 0.4987
+
+------------------------------------------------------------------------
+Group: E4 honba=1 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 11301.7256
+Model RMSE            : 106.3096
+Model MAE (diagnostic): 86.2201
+
+--- Correlation with true EV ---
+Model corr            : 0.1455
+
+------------------------------------------------------------------------
+Group: E4 honba=1 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6933.2002
+Model RMSE            : 83.2658
+Model MAE (diagnostic): 66.9945
+
+--- Correlation with true EV ---
+Model corr            : 0.5067
+
+------------------------------------------------------------------------
+Group: E4 honba=2 riichi=0
+Rounds evaluated in group: 1192
+Seat-samples in group    : 4768
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1192
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5611.8491
+Model RMSE            : 74.9123
+Model MAE (diagnostic): 58.2060
+
+--- Correlation with true EV ---
+Model corr            : 0.6463
+
+------------------------------------------------------------------------
+Group: E4 honba=2 riichi=1
+Rounds evaluated in group: 361
+Seat-samples in group    : 1444
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 361
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6632.7793
+Model RMSE            : 81.4419
+Model MAE (diagnostic): 65.0420
+
+--- Correlation with true EV ---
+Model corr            : 0.5437
+
+------------------------------------------------------------------------
+Group: E4 honba=2 riichi=2
+Rounds evaluated in group: 161
+Seat-samples in group    : 644
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 161
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7301.9458
+Model RMSE            : 85.4514
+Model MAE (diagnostic): 69.6516
+
+--- Correlation with true EV ---
+Model corr            : 0.4725
+
+------------------------------------------------------------------------
+Group: E4 honba=2 riichi=3
+Rounds evaluated in group: 32
+Seat-samples in group    : 128
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 32
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8432.6816
+Model RMSE            : 91.8296
+Model MAE (diagnostic): 74.3653
+
+--- Correlation with true EV ---
+Model corr            : 0.3030
+
+------------------------------------------------------------------------
+Group: E4 honba=2 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3540.7031
+Model RMSE            : 59.5038
+Model MAE (diagnostic): 49.5007
+
+--- Correlation with true EV ---
+Model corr            : 0.8448
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=0
+Rounds evaluated in group: 429
+Seat-samples in group    : 1716
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 429
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5166.9380
+Model RMSE            : 71.8814
+Model MAE (diagnostic): 55.3062
+
+--- Correlation with true EV ---
+Model corr            : 0.6873
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=1
+Rounds evaluated in group: 104
+Seat-samples in group    : 416
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 104
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6472.0400
+Model RMSE            : 80.4490
+Model MAE (diagnostic): 63.0629
+
+--- Correlation with true EV ---
+Model corr            : 0.5612
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=2
+Rounds evaluated in group: 49
+Seat-samples in group    : 196
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 49
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5696.1001
+Model RMSE            : 75.4725
+Model MAE (diagnostic): 58.8122
+
+--- Correlation with true EV ---
+Model corr            : 0.6332
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=3
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7694.1978
+Model RMSE            : 87.7166
+Model MAE (diagnostic): 69.6153
+
+--- Correlation with true EV ---
+Model corr            : 0.4333
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=4
+Rounds evaluated in group: 9
+Seat-samples in group    : 36
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 9
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5982.6484
+Model RMSE            : 77.3476
+Model MAE (diagnostic): 61.0007
+
+--- Correlation with true EV ---
+Model corr            : 0.5558
+
+------------------------------------------------------------------------
+Group: E4 honba=3 riichi=5
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4490.7515
+Model RMSE            : 67.0131
+Model MAE (diagnostic): 58.7210
+
+--- Correlation with true EV ---
+Model corr            : 0.7383
+
+------------------------------------------------------------------------
+Group: E4 honba=4 riichi=0
+Rounds evaluated in group: 143
+Seat-samples in group    : 572
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 143
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5204.0898
+Model RMSE            : 72.1394
+Model MAE (diagnostic): 54.6209
+
+--- Correlation with true EV ---
+Model corr            : 0.6914
+
+------------------------------------------------------------------------
+Group: E4 honba=4 riichi=1
+Rounds evaluated in group: 41
+Seat-samples in group    : 164
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 41
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5556.9390
+Model RMSE            : 74.5449
+Model MAE (diagnostic): 58.4484
+
+--- Correlation with true EV ---
+Model corr            : 0.6426
+
+------------------------------------------------------------------------
+Group: E4 honba=4 riichi=2
+Rounds evaluated in group: 16
+Seat-samples in group    : 64
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 16
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6250.4111
+Model RMSE            : 79.0595
+Model MAE (diagnostic): 62.4980
+
+--- Correlation with true EV ---
+Model corr            : 0.5971
+
+------------------------------------------------------------------------
+Group: E4 honba=4 riichi=3
+Rounds evaluated in group: 10
+Seat-samples in group    : 40
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 10
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5156.5947
+Model RMSE            : 71.8094
+Model MAE (diagnostic): 57.7275
+
+--- Correlation with true EV ---
+Model corr            : 0.6727
+
+------------------------------------------------------------------------
+Group: E4 honba=4 riichi=5
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5673.6396
+Model RMSE            : 75.3236
+Model MAE (diagnostic): 61.3821
+
+--- Correlation with true EV ---
+Model corr            : 0.5298
+
+------------------------------------------------------------------------
+Group: E4 honba=5 riichi=0
+Rounds evaluated in group: 78
+Seat-samples in group    : 312
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 78
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4320.9800
+Model RMSE            : 65.7342
+Model MAE (diagnostic): 49.2315
+
+--- Correlation with true EV ---
+Model corr            : 0.7610
+
+------------------------------------------------------------------------
+Group: E4 honba=5 riichi=1
+Rounds evaluated in group: 25
+Seat-samples in group    : 100
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 25
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5079.7910
+Model RMSE            : 71.2727
+Model MAE (diagnostic): 54.9648
+
+--- Correlation with true EV ---
+Model corr            : 0.6895
+
+------------------------------------------------------------------------
+Group: E4 honba=5 riichi=2
+Rounds evaluated in group: 6
+Seat-samples in group    : 24
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 6
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3764.0901
+Model RMSE            : 61.3522
+Model MAE (diagnostic): 48.1211
+
+--- Correlation with true EV ---
+Model corr            : 0.7932
+
+------------------------------------------------------------------------
+Group: E4 honba=5 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6228.1006
+Model RMSE            : 78.9183
+Model MAE (diagnostic): 60.6586
+
+--- Correlation with true EV ---
+Model corr            : 0.6609
+
+------------------------------------------------------------------------
+Group: E4 honba=5 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4108.4805
+Model RMSE            : 64.0974
+Model MAE (diagnostic): 53.1322
+
+--- Correlation with true EV ---
+Model corr            : 0.7810
+
+------------------------------------------------------------------------
+Group: S1 honba=0 riichi=0
+Rounds evaluated in group: 11746
+Seat-samples in group    : 46984
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 11746
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5733.7837
+Model RMSE            : 75.7218
+Model MAE (diagnostic): 58.8672
+
+--- Correlation with true EV ---
+Model corr            : 0.6194
+
+------------------------------------------------------------------------
+Group: S1 honba=1 riichi=0
+Rounds evaluated in group: 3217
+Seat-samples in group    : 12868
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3217
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5372.2524
+Model RMSE            : 73.2957
+Model MAE (diagnostic): 56.6736
+
+--- Correlation with true EV ---
+Model corr            : 0.6547
+
+------------------------------------------------------------------------
+Group: S1 honba=1 riichi=1
+Rounds evaluated in group: 1018
+Seat-samples in group    : 4072
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1018
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6344.8999
+Model RMSE            : 79.6549
+Model MAE (diagnostic): 62.7832
+
+--- Correlation with true EV ---
+Model corr            : 0.5591
+
+------------------------------------------------------------------------
+Group: S1 honba=1 riichi=2
+Rounds evaluated in group: 201
+Seat-samples in group    : 804
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 201
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6603.8667
+Model RMSE            : 81.2642
+Model MAE (diagnostic): 63.6066
+
+--- Correlation with true EV ---
+Model corr            : 0.5376
+
+------------------------------------------------------------------------
+Group: S1 honba=1 riichi=3
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 9226.2139
+Model RMSE            : 96.0532
+Model MAE (diagnostic): 78.5890
+
+--- Correlation with true EV ---
+Model corr            : 0.1736
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=0
+Rounds evaluated in group: 1134
+Seat-samples in group    : 4536
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1134
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5245.5063
+Model RMSE            : 72.4259
+Model MAE (diagnostic): 55.7369
+
+--- Correlation with true EV ---
+Model corr            : 0.6697
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=1
+Rounds evaluated in group: 344
+Seat-samples in group    : 1376
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 344
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5971.7129
+Model RMSE            : 77.2769
+Model MAE (diagnostic): 60.8170
+
+--- Correlation with true EV ---
+Model corr            : 0.5994
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=2
+Rounds evaluated in group: 164
+Seat-samples in group    : 656
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 164
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5604.9160
+Model RMSE            : 74.8660
+Model MAE (diagnostic): 59.1399
+
+--- Correlation with true EV ---
+Model corr            : 0.6351
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=3
+Rounds evaluated in group: 33
+Seat-samples in group    : 132
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 33
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6961.7876
+Model RMSE            : 83.4373
+Model MAE (diagnostic): 65.5156
+
+--- Correlation with true EV ---
+Model corr            : 0.5042
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 7413.8564
+Model RMSE            : 86.1038
+Model MAE (diagnostic): 77.0032
+
+--- Correlation with true EV ---
+Model corr            : 0.4483
+
+------------------------------------------------------------------------
+Group: S1 honba=2 riichi=5
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5601.2715
+Model RMSE            : 74.8416
+Model MAE (diagnostic): 65.6279
+
+--- Correlation with true EV ---
+Model corr            : 0.6151
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=0
+Rounds evaluated in group: 452
+Seat-samples in group    : 1808
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 452
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5012.1055
+Model RMSE            : 70.7962
+Model MAE (diagnostic): 54.0628
+
+--- Correlation with true EV ---
+Model corr            : 0.6952
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=1
+Rounds evaluated in group: 121
+Seat-samples in group    : 484
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 121
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5341.9585
+Model RMSE            : 73.0887
+Model MAE (diagnostic): 56.3034
+
+--- Correlation with true EV ---
+Model corr            : 0.6602
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=2
+Rounds evaluated in group: 47
+Seat-samples in group    : 188
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 47
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5443.3970
+Model RMSE            : 73.7794
+Model MAE (diagnostic): 58.2798
+
+--- Correlation with true EV ---
+Model corr            : 0.6495
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=3
+Rounds evaluated in group: 15
+Seat-samples in group    : 60
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 15
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4897.6685
+Model RMSE            : 69.9833
+Model MAE (diagnostic): 56.8674
+
+--- Correlation with true EV ---
+Model corr            : 0.7006
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=4
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 10436.7285
+Model RMSE            : 102.1603
+Model MAE (diagnostic): 79.7105
+
+--- Correlation with true EV ---
+Model corr            : -0.0428
+
+------------------------------------------------------------------------
+Group: S1 honba=3 riichi=5
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4303.7339
+Model RMSE            : 65.6028
+Model MAE (diagnostic): 59.5802
+
+--- Correlation with true EV ---
+Model corr            : 0.7227
+
+------------------------------------------------------------------------
+Group: S1 honba=4 riichi=0
+Rounds evaluated in group: 160
+Seat-samples in group    : 640
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 160
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5526.0723
+Model RMSE            : 74.3376
+Model MAE (diagnostic): 55.9410
+
+--- Correlation with true EV ---
+Model corr            : 0.6627
+
+------------------------------------------------------------------------
+Group: S1 honba=4 riichi=1
+Rounds evaluated in group: 43
+Seat-samples in group    : 172
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 43
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5446.2227
+Model RMSE            : 73.7985
+Model MAE (diagnostic): 55.8616
+
+--- Correlation with true EV ---
+Model corr            : 0.6485
+
+------------------------------------------------------------------------
+Group: S1 honba=4 riichi=2
+Rounds evaluated in group: 16
+Seat-samples in group    : 64
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 16
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6622.8369
+Model RMSE            : 81.3808
+Model MAE (diagnostic): 63.1619
+
+--- Correlation with true EV ---
+Model corr            : 0.5456
+
+------------------------------------------------------------------------
+Group: S1 honba=4 riichi=3
+Rounds evaluated in group: 6
+Seat-samples in group    : 24
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 6
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5727.3716
+Model RMSE            : 75.6794
+Model MAE (diagnostic): 59.1440
+
+--- Correlation with true EV ---
+Model corr            : 0.6143
+
+------------------------------------------------------------------------
+Group: S1 honba=4 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5942.0356
+Model RMSE            : 77.0846
+Model MAE (diagnostic): 62.3996
+
+--- Correlation with true EV ---
+Model corr            : 0.6825
+
+------------------------------------------------------------------------
+Group: S1 honba=5 riichi=0
+Rounds evaluated in group: 83
+Seat-samples in group    : 332
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 83
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4362.3252
+Model RMSE            : 66.0479
+Model MAE (diagnostic): 49.6811
+
+--- Correlation with true EV ---
+Model corr            : 0.7480
+
+------------------------------------------------------------------------
+Group: S1 honba=5 riichi=1
+Rounds evaluated in group: 17
+Seat-samples in group    : 68
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 17
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3025.9446
+Model RMSE            : 55.0086
+Model MAE (diagnostic): 42.2759
+
+--- Correlation with true EV ---
+Model corr            : 0.8458
+
+------------------------------------------------------------------------
+Group: S1 honba=5 riichi=2
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5733.7773
+Model RMSE            : 75.7217
+Model MAE (diagnostic): 58.1492
+
+--- Correlation with true EV ---
+Model corr            : 0.6411
+
+------------------------------------------------------------------------
+Group: S1 honba=5 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 1861.9733
+Model RMSE            : 43.1506
+Model MAE (diagnostic): 38.9656
+
+--- Correlation with true EV ---
+Model corr            : 0.9508
+
+------------------------------------------------------------------------
+Group: S1 honba=5 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 15924.8447
+Model RMSE            : 126.1937
+Model MAE (diagnostic): 109.7202
+
+--- Correlation with true EV ---
+Model corr            : -0.0041
+
+------------------------------------------------------------------------
+Group: S2 honba=0 riichi=0
+Rounds evaluated in group: 11069
+Seat-samples in group    : 44276
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 11069
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4792.8867
+Model RMSE            : 69.2307
+Model MAE (diagnostic): 52.4152
+
+--- Correlation with true EV ---
+Model corr            : 0.6935
+
+------------------------------------------------------------------------
+Group: S2 honba=1 riichi=0
+Rounds evaluated in group: 3121
+Seat-samples in group    : 12484
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3121
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4586.1733
+Model RMSE            : 67.7213
+Model MAE (diagnostic): 50.6390
+
+--- Correlation with true EV ---
+Model corr            : 0.7136
+
+------------------------------------------------------------------------
+Group: S2 honba=1 riichi=1
+Rounds evaluated in group: 1024
+Seat-samples in group    : 4096
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1024
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5256.7949
+Model RMSE            : 72.5038
+Model MAE (diagnostic): 55.2670
+
+--- Correlation with true EV ---
+Model corr            : 0.6539
+
+------------------------------------------------------------------------
+Group: S2 honba=1 riichi=2
+Rounds evaluated in group: 147
+Seat-samples in group    : 588
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 147
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4392.6997
+Model RMSE            : 66.2774
+Model MAE (diagnostic): 50.7982
+
+--- Correlation with true EV ---
+Model corr            : 0.7232
+
+------------------------------------------------------------------------
+Group: S2 honba=1 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3193.0112
+Model RMSE            : 56.5067
+Model MAE (diagnostic): 52.0420
+
+--- Correlation with true EV ---
+Model corr            : 0.8428
+
+------------------------------------------------------------------------
+Group: S2 honba=2 riichi=0
+Rounds evaluated in group: 1123
+Seat-samples in group    : 4492
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1123
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4356.8311
+Model RMSE            : 66.0063
+Model MAE (diagnostic): 49.0429
+
+--- Correlation with true EV ---
+Model corr            : 0.7350
+
+------------------------------------------------------------------------
+Group: S2 honba=2 riichi=1
+Rounds evaluated in group: 348
+Seat-samples in group    : 1392
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 348
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5102.4648
+Model RMSE            : 71.4315
+Model MAE (diagnostic): 54.6060
+
+--- Correlation with true EV ---
+Model corr            : 0.6698
+
+------------------------------------------------------------------------
+Group: S2 honba=2 riichi=2
+Rounds evaluated in group: 135
+Seat-samples in group    : 540
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 135
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4816.7695
+Model RMSE            : 69.4030
+Model MAE (diagnostic): 53.4252
+
+--- Correlation with true EV ---
+Model corr            : 0.6877
+
+------------------------------------------------------------------------
+Group: S2 honba=2 riichi=3
+Rounds evaluated in group: 25
+Seat-samples in group    : 100
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 25
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5277.8936
+Model RMSE            : 72.6491
+Model MAE (diagnostic): 54.0149
+
+--- Correlation with true EV ---
+Model corr            : 0.6484
+
+------------------------------------------------------------------------
+Group: S2 honba=2 riichi=4
+Rounds evaluated in group: 5
+Seat-samples in group    : 20
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 5
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3739.5476
+Model RMSE            : 61.1518
+Model MAE (diagnostic): 46.1360
+
+--- Correlation with true EV ---
+Model corr            : 0.7991
+
+------------------------------------------------------------------------
+Group: S2 honba=3 riichi=0
+Rounds evaluated in group: 387
+Seat-samples in group    : 1548
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 387
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4610.5513
+Model RMSE            : 67.9010
+Model MAE (diagnostic): 49.9025
+
+--- Correlation with true EV ---
+Model corr            : 0.7232
+
+------------------------------------------------------------------------
+Group: S2 honba=3 riichi=1
+Rounds evaluated in group: 118
+Seat-samples in group    : 472
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 118
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4316.3267
+Model RMSE            : 65.6988
+Model MAE (diagnostic): 49.9003
+
+--- Correlation with true EV ---
+Model corr            : 0.7347
+
+------------------------------------------------------------------------
+Group: S2 honba=3 riichi=2
+Rounds evaluated in group: 63
+Seat-samples in group    : 252
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 63
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6449.4141
+Model RMSE            : 80.3082
+Model MAE (diagnostic): 61.6041
+
+--- Correlation with true EV ---
+Model corr            : 0.5620
+
+------------------------------------------------------------------------
+Group: S2 honba=3 riichi=3
+Rounds evaluated in group: 16
+Seat-samples in group    : 64
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 16
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5575.3491
+Model RMSE            : 74.6683
+Model MAE (diagnostic): 59.0414
+
+--- Correlation with true EV ---
+Model corr            : 0.6057
+
+------------------------------------------------------------------------
+Group: S2 honba=3 riichi=4
+Rounds evaluated in group: 4
+Seat-samples in group    : 16
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 4
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3846.6948
+Model RMSE            : 62.0217
+Model MAE (diagnostic): 47.2191
+
+--- Correlation with true EV ---
+Model corr            : 0.8251
+
+------------------------------------------------------------------------
+Group: S2 honba=4 riichi=0
+Rounds evaluated in group: 145
+Seat-samples in group    : 580
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 145
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3804.3457
+Model RMSE            : 61.6794
+Model MAE (diagnostic): 45.7789
+
+--- Correlation with true EV ---
+Model corr            : 0.7863
+
+------------------------------------------------------------------------
+Group: S2 honba=4 riichi=1
+Rounds evaluated in group: 41
+Seat-samples in group    : 164
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 41
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5674.6587
+Model RMSE            : 75.3303
+Model MAE (diagnostic): 57.2210
+
+--- Correlation with true EV ---
+Model corr            : 0.6481
+
+------------------------------------------------------------------------
+Group: S2 honba=4 riichi=2
+Rounds evaluated in group: 20
+Seat-samples in group    : 80
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 20
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5133.6494
+Model RMSE            : 71.6495
+Model MAE (diagnostic): 54.9717
+
+--- Correlation with true EV ---
+Model corr            : 0.6729
+
+------------------------------------------------------------------------
+Group: S2 honba=4 riichi=3
+Rounds evaluated in group: 10
+Seat-samples in group    : 40
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 10
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6082.4731
+Model RMSE            : 77.9902
+Model MAE (diagnostic): 61.7127
+
+--- Correlation with true EV ---
+Model corr            : 0.5759
+
+------------------------------------------------------------------------
+Group: S2 honba=4 riichi=4
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 10801.4346
+Model RMSE            : 103.9300
+Model MAE (diagnostic): 88.4674
+
+--- Correlation with true EV ---
+Model corr            : -0.1494
+
+------------------------------------------------------------------------
+Group: S2 honba=5 riichi=0
+Rounds evaluated in group: 89
+Seat-samples in group    : 356
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 89
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3915.6868
+Model RMSE            : 62.5754
+Model MAE (diagnostic): 45.5824
+
+--- Correlation with true EV ---
+Model corr            : 0.7815
+
+------------------------------------------------------------------------
+Group: S2 honba=5 riichi=1
+Rounds evaluated in group: 26
+Seat-samples in group    : 104
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 26
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6515.6230
+Model RMSE            : 80.7194
+Model MAE (diagnostic): 63.1980
+
+--- Correlation with true EV ---
+Model corr            : 0.5951
+
+------------------------------------------------------------------------
+Group: S2 honba=5 riichi=2
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5554.6851
+Model RMSE            : 74.5298
+Model MAE (diagnostic): 56.0390
+
+--- Correlation with true EV ---
+Model corr            : 0.6486
+
+------------------------------------------------------------------------
+Group: S2 honba=5 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2959.8071
+Model RMSE            : 54.4041
+Model MAE (diagnostic): 40.9743
+
+--- Correlation with true EV ---
+Model corr            : 0.8234
+
+------------------------------------------------------------------------
+Group: S3 honba=0 riichi=0
+Rounds evaluated in group: 10435
+Seat-samples in group    : 41740
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 10435
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3694.4658
+Model RMSE            : 60.7821
+Model MAE (diagnostic): 43.7150
+
+--- Correlation with true EV ---
+Model corr            : 0.7720
+
+------------------------------------------------------------------------
+Group: S3 honba=1 riichi=0
+Rounds evaluated in group: 2830
+Seat-samples in group    : 11320
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2830
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3532.8943
+Model RMSE            : 59.4382
+Model MAE (diagnostic): 42.4086
+
+--- Correlation with true EV ---
+Model corr            : 0.7858
+
+------------------------------------------------------------------------
+Group: S3 honba=1 riichi=1
+Rounds evaluated in group: 903
+Seat-samples in group    : 3612
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 903
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4126.0420
+Model RMSE            : 64.2343
+Model MAE (diagnostic): 47.5638
+
+--- Correlation with true EV ---
+Model corr            : 0.7378
+
+------------------------------------------------------------------------
+Group: S3 honba=1 riichi=2
+Rounds evaluated in group: 137
+Seat-samples in group    : 548
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 137
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4348.6431
+Model RMSE            : 65.9442
+Model MAE (diagnostic): 49.2286
+
+--- Correlation with true EV ---
+Model corr            : 0.7204
+
+------------------------------------------------------------------------
+Group: S3 honba=1 riichi=3
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 1729.0160
+Model RMSE            : 41.5814
+Model MAE (diagnostic): 28.5762
+
+--- Correlation with true EV ---
+Model corr            : 0.9045
+
+------------------------------------------------------------------------
+Group: S3 honba=2 riichi=0
+Rounds evaluated in group: 1004
+Seat-samples in group    : 4016
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1004
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3544.5957
+Model RMSE            : 59.5365
+Model MAE (diagnostic): 42.8640
+
+--- Correlation with true EV ---
+Model corr            : 0.7883
+
+------------------------------------------------------------------------
+Group: S3 honba=2 riichi=1
+Rounds evaluated in group: 298
+Seat-samples in group    : 1192
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 298
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3893.4504
+Model RMSE            : 62.3975
+Model MAE (diagnostic): 46.3233
+
+--- Correlation with true EV ---
+Model corr            : 0.7564
+
+------------------------------------------------------------------------
+Group: S3 honba=2 riichi=2
+Rounds evaluated in group: 114
+Seat-samples in group    : 456
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 114
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4892.2490
+Model RMSE            : 69.9446
+Model MAE (diagnostic): 51.1923
+
+--- Correlation with true EV ---
+Model corr            : 0.6776
+
+------------------------------------------------------------------------
+Group: S3 honba=2 riichi=3
+Rounds evaluated in group: 22
+Seat-samples in group    : 88
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 22
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4418.9526
+Model RMSE            : 66.4752
+Model MAE (diagnostic): 52.5374
+
+--- Correlation with true EV ---
+Model corr            : 0.7126
+
+------------------------------------------------------------------------
+Group: S3 honba=3 riichi=0
+Rounds evaluated in group: 365
+Seat-samples in group    : 1460
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 365
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3508.0479
+Model RMSE            : 59.2288
+Model MAE (diagnostic): 41.6726
+
+--- Correlation with true EV ---
+Model corr            : 0.7927
+
+------------------------------------------------------------------------
+Group: S3 honba=3 riichi=1
+Rounds evaluated in group: 115
+Seat-samples in group    : 460
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 115
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4014.2913
+Model RMSE            : 63.3584
+Model MAE (diagnostic): 46.5634
+
+--- Correlation with true EV ---
+Model corr            : 0.7485
+
+------------------------------------------------------------------------
+Group: S3 honba=3 riichi=2
+Rounds evaluated in group: 43
+Seat-samples in group    : 172
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 43
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4978.6812
+Model RMSE            : 70.5598
+Model MAE (diagnostic): 52.2437
+
+--- Correlation with true EV ---
+Model corr            : 0.6773
+
+------------------------------------------------------------------------
+Group: S3 honba=3 riichi=3
+Rounds evaluated in group: 15
+Seat-samples in group    : 60
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 15
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4270.9741
+Model RMSE            : 65.3527
+Model MAE (diagnostic): 50.8935
+
+--- Correlation with true EV ---
+Model corr            : 0.7339
+
+------------------------------------------------------------------------
+Group: S3 honba=3 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4078.4111
+Model RMSE            : 63.8624
+Model MAE (diagnostic): 48.4099
+
+--- Correlation with true EV ---
+Model corr            : 0.7326
+
+------------------------------------------------------------------------
+Group: S3 honba=4 riichi=0
+Rounds evaluated in group: 125
+Seat-samples in group    : 500
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 125
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3324.1643
+Model RMSE            : 57.6556
+Model MAE (diagnostic): 40.7769
+
+--- Correlation with true EV ---
+Model corr            : 0.8065
+
+------------------------------------------------------------------------
+Group: S3 honba=4 riichi=1
+Rounds evaluated in group: 45
+Seat-samples in group    : 180
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 45
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4228.6113
+Model RMSE            : 65.0278
+Model MAE (diagnostic): 46.6948
+
+--- Correlation with true EV ---
+Model corr            : 0.7424
+
+------------------------------------------------------------------------
+Group: S3 honba=4 riichi=2
+Rounds evaluated in group: 23
+Seat-samples in group    : 92
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 23
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2675.9075
+Model RMSE            : 51.7292
+Model MAE (diagnostic): 37.8679
+
+--- Correlation with true EV ---
+Model corr            : 0.8430
+
+------------------------------------------------------------------------
+Group: S3 honba=4 riichi=3
+Rounds evaluated in group: 5
+Seat-samples in group    : 20
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 5
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4057.2280
+Model RMSE            : 63.6964
+Model MAE (diagnostic): 51.1592
+
+--- Correlation with true EV ---
+Model corr            : 0.7575
+
+------------------------------------------------------------------------
+Group: S3 honba=4 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 13117.3145
+Model RMSE            : 114.5308
+Model MAE (diagnostic): 98.4093
+
+--- Correlation with true EV ---
+Model corr            : -0.5101
+
+------------------------------------------------------------------------
+Group: S3 honba=5 riichi=0
+Rounds evaluated in group: 92
+Seat-samples in group    : 368
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 92
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3064.5190
+Model RMSE            : 55.3581
+Model MAE (diagnostic): 39.0688
+
+--- Correlation with true EV ---
+Model corr            : 0.8277
+
+------------------------------------------------------------------------
+Group: S3 honba=5 riichi=1
+Rounds evaluated in group: 23
+Seat-samples in group    : 92
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 23
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4478.7568
+Model RMSE            : 66.9235
+Model MAE (diagnostic): 47.6416
+
+--- Correlation with true EV ---
+Model corr            : 0.7322
+
+------------------------------------------------------------------------
+Group: S3 honba=5 riichi=2
+Rounds evaluated in group: 7
+Seat-samples in group    : 28
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 7
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2701.8188
+Model RMSE            : 51.9790
+Model MAE (diagnostic): 38.2259
+
+--- Correlation with true EV ---
+Model corr            : 0.8565
+
+------------------------------------------------------------------------
+Group: S3 honba=5 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 4036.8203
+Model RMSE            : 63.5360
+Model MAE (diagnostic): 57.1712
+
+--- Correlation with true EV ---
+Model corr            : 0.7634
+
+------------------------------------------------------------------------
+Group: S4 honba=0 riichi=0
+Rounds evaluated in group: 9652
+Seat-samples in group    : 38608
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 9652
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2379.0623
+Model RMSE            : 48.7756
+Model MAE (diagnostic): 32.1183
+
+--- Correlation with true EV ---
+Model corr            : 0.8583
+
+------------------------------------------------------------------------
+Group: S4 honba=1 riichi=0
+Rounds evaluated in group: 1707
+Seat-samples in group    : 6828
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1707
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2579.6248
+Model RMSE            : 50.7900
+Model MAE (diagnostic): 34.0684
+
+--- Correlation with true EV ---
+Model corr            : 0.8455
+
+------------------------------------------------------------------------
+Group: S4 honba=1 riichi=1
+Rounds evaluated in group: 714
+Seat-samples in group    : 2856
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 714
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3181.3054
+Model RMSE            : 56.4031
+Model MAE (diagnostic): 38.0978
+
+--- Correlation with true EV ---
+Model corr            : 0.8031
+
+------------------------------------------------------------------------
+Group: S4 honba=1 riichi=2
+Rounds evaluated in group: 96
+Seat-samples in group    : 384
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 96
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2421.8728
+Model RMSE            : 49.2125
+Model MAE (diagnostic): 34.0408
+
+--- Correlation with true EV ---
+Model corr            : 0.8566
+
+------------------------------------------------------------------------
+Group: S4 honba=1 riichi=3
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 16078.9785
+Model RMSE            : 126.8029
+Model MAE (diagnostic): 103.3660
+
+--- Correlation with true EV ---
+Model corr            : -0.2383
+
+------------------------------------------------------------------------
+Group: S4 honba=1 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 1152.6801
+Model RMSE            : 33.9511
+Model MAE (diagnostic): 29.0536
+
+--- Correlation with true EV ---
+Model corr            : 0.9403
+
+------------------------------------------------------------------------
+Group: S4 honba=2 riichi=0
+Rounds evaluated in group: 523
+Seat-samples in group    : 2092
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 523
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2373.5029
+Model RMSE            : 48.7186
+Model MAE (diagnostic): 33.4944
+
+--- Correlation with true EV ---
+Model corr            : 0.8589
+
+------------------------------------------------------------------------
+Group: S4 honba=2 riichi=1
+Rounds evaluated in group: 278
+Seat-samples in group    : 1112
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 278
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2855.6582
+Model RMSE            : 53.4384
+Model MAE (diagnostic): 36.2901
+
+--- Correlation with true EV ---
+Model corr            : 0.8272
+
+------------------------------------------------------------------------
+Group: S4 honba=2 riichi=2
+Rounds evaluated in group: 100
+Seat-samples in group    : 400
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 100
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2851.0825
+Model RMSE            : 53.3955
+Model MAE (diagnostic): 35.0885
+
+--- Correlation with true EV ---
+Model corr            : 0.8264
+
+------------------------------------------------------------------------
+Group: S4 honba=2 riichi=3
+Rounds evaluated in group: 19
+Seat-samples in group    : 76
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 19
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2961.1387
+Model RMSE            : 54.4163
+Model MAE (diagnostic): 41.3385
+
+--- Correlation with true EV ---
+Model corr            : 0.8176
+
+------------------------------------------------------------------------
+Group: S4 honba=2 riichi=4
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 6950.9971
+Model RMSE            : 83.3726
+Model MAE (diagnostic): 55.4821
+
+--- Correlation with true EV ---
+Model corr            : 0.5722
+
+------------------------------------------------------------------------
+Group: S4 honba=3 riichi=0
+Rounds evaluated in group: 196
+Seat-samples in group    : 784
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 196
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2268.5217
+Model RMSE            : 47.6290
+Model MAE (diagnostic): 32.5221
+
+--- Correlation with true EV ---
+Model corr            : 0.8666
+
+------------------------------------------------------------------------
+Group: S4 honba=3 riichi=1
+Rounds evaluated in group: 69
+Seat-samples in group    : 276
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 69
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2641.1985
+Model RMSE            : 51.3926
+Model MAE (diagnostic): 35.4207
+
+--- Correlation with true EV ---
+Model corr            : 0.8435
+
+------------------------------------------------------------------------
+Group: S4 honba=3 riichi=2
+Rounds evaluated in group: 31
+Seat-samples in group    : 124
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 31
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3472.1731
+Model RMSE            : 58.9251
+Model MAE (diagnostic): 39.0018
+
+--- Correlation with true EV ---
+Model corr            : 0.7846
+
+------------------------------------------------------------------------
+Group: S4 honba=3 riichi=3
+Rounds evaluated in group: 12
+Seat-samples in group    : 48
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 12
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 5662.4219
+Model RMSE            : 75.2491
+Model MAE (diagnostic): 51.2904
+
+--- Correlation with true EV ---
+Model corr            : 0.6098
+
+------------------------------------------------------------------------
+Group: S4 honba=3 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3023.4583
+Model RMSE            : 54.9860
+Model MAE (diagnostic): 46.0418
+
+--- Correlation with true EV ---
+Model corr            : 0.9953
+
+------------------------------------------------------------------------
+Group: S4 honba=4 riichi=0
+Rounds evaluated in group: 50
+Seat-samples in group    : 200
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 50
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2149.7542
+Model RMSE            : 46.3654
+Model MAE (diagnostic): 31.3315
+
+--- Correlation with true EV ---
+Model corr            : 0.8762
+
+------------------------------------------------------------------------
+Group: S4 honba=4 riichi=1
+Rounds evaluated in group: 29
+Seat-samples in group    : 116
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 29
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : -0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3545.9204
+Model RMSE            : 59.5476
+Model MAE (diagnostic): 37.3947
+
+--- Correlation with true EV ---
+Model corr            : 0.7826
+
+------------------------------------------------------------------------
+Group: S4 honba=4 riichi=2
+Rounds evaluated in group: 14
+Seat-samples in group    : 56
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 14
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 3422.6531
+Model RMSE            : 58.5034
+Model MAE (diagnostic): 43.6964
+
+--- Correlation with true EV ---
+Model corr            : 0.7905
+
+------------------------------------------------------------------------
+Group: S4 honba=4 riichi=3
+Rounds evaluated in group: 2
+Seat-samples in group    : 8
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 2
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2684.3599
+Model RMSE            : 51.8108
+Model MAE (diagnostic): 39.5254
+
+--- Correlation with true EV ---
+Model corr            : 0.8520
+
+------------------------------------------------------------------------
+Group: S4 honba=4 riichi=4
+Rounds evaluated in group: 1
+Seat-samples in group    : 4
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 1
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 8038.2456
+Model RMSE            : 89.6563
+Model MAE (diagnostic): 69.4872
+
+--- Correlation with true EV ---
+Model corr            : 0.2697
+
+------------------------------------------------------------------------
+Group: S4 honba=5 riichi=0
+Rounds evaluated in group: 26
+Seat-samples in group    : 104
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 26
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 1765.8495
+Model RMSE            : 42.0220
+Model MAE (diagnostic): 30.6676
+
+--- Correlation with true EV ---
+Model corr            : 0.9009
+
+------------------------------------------------------------------------
+Group: S4 honba=5 riichi=1
+Rounds evaluated in group: 20
+Seat-samples in group    : 80
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 20
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2512.4302
+Model RMSE            : 50.1241
+Model MAE (diagnostic): 34.0100
+
+--- Correlation with true EV ---
+Model corr            : 0.8617
+
+------------------------------------------------------------------------
+Group: S4 honba=5 riichi=2
+Rounds evaluated in group: 9
+Seat-samples in group    : 36
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 9
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2391.0396
+Model RMSE            : 48.8983
+Model MAE (diagnostic): 31.8117
+
+--- Correlation with true EV ---
+Model corr            : 0.8637
+
+------------------------------------------------------------------------
+Group: S4 honba=5 riichi=3
+Rounds evaluated in group: 3
+Seat-samples in group    : 12
+
+=== EV ACCURACY RESULTS ===
+Rounds evaluated      : 3
+Rounds skipped (W+)   : 0
+Avg sum(model EVs)    : 0.0000 (should be ~0)
+RMSE(sum model EVs)   : 0.0000 (should be small)
+Max |sum model EVs|   : 0.0000
+
+--- MSE / RMSE (thousands of points² / thousands) ---
+Model MSE             : 2706.6086
+Model RMSE            : 52.0251
+Model MAE (diagnostic): 40.7240
+
+--- Correlation with true EV ---
+Model corr            : 0.8374

@@ -26,24 +26,34 @@ from pathlib import Path
 
 import numpy as np
 
-from helper import UMA, compute_uma, _get_round_count
-from xgboost_model import estimate_all_values, load_model
+try:
+    from .helper import UMA, _get_round_count
+    from .xgboost_model import estimate_all_values, load_model
+except ImportError:  # Allows `python models/evaluate_model.py`.
+    from helper import UMA, _get_round_count
+    from xgboost_model import estimate_all_values, load_model
 
 
 # Last 10% of database is for validation by default
+REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_VALIDATE_SPLIT = 0.1
-DEFAULT_DB_PATH = "../data/rounds.db"
-DEFAULT_MODEL_PATH = "xgboost.json"
+DEFAULT_DB_PATH = str(REPO_ROOT / "data" / "rounds.db")
+DEFAULT_MODEL_PATH = str(Path(__file__).resolve().parent / "xgboost.json")
 DEFAULT_CALIBRATION_BUCKETS = 20
 
-DEFAULT_OUT_PATH = "evaluation_report.txt"
+DEFAULT_OUT_PATH = str(Path(__file__).resolve().parent / "evaluation_report.txt")
 DEFAULT_GROUP_CALIB_MIN_SAMPLES = 200  # measured in seat-samples (4 per round)
 
-model = load_model(DEFAULT_MODEL_PATH)
+SUPPORTED_WINDS = {"E", "S", 0, 1}
+WIND_LABELS = {"E": "E", "S": "S", 0: "E", 1: "S"}
+
+model = None
 
 
-# CHANGE YOUR MODEL HERE:
 def predict(wind, round_num, honba, riichi, scores_pts) -> tuple[float, float, float, float]:
+    if model is None:
+        raise RuntimeError("Model has not been loaded. Call evaluate_model_ev first.")
+
     scores_div = [s / 1000.0 for s in scores_pts]
 
     evs = estimate_all_values(
@@ -240,13 +250,14 @@ def evaluate_model_ev(
             wind, rnd, honba, riichi = row[0], int(row[1]), int(row[2]), int(row[3])
 
             # Match repo convention: evaluate only East/South games.
-            if wind not in ("E", "S"):
+            if wind not in SUPPORTED_WINDS:
                 skipped_rounds += 1
                 continue
 
             honba_b = min(honba, 5)
             riichi_b = min(riichi, 5)
-            gkey = (str(wind), int(rnd), honba_b, riichi_b)
+            wind_label = WIND_LABELS[wind]
+            gkey = (wind_label, int(rnd), honba_b, riichi_b)
 
             s_start_pts = list(row[4:8])
             s_final_pts = row[8:12]
@@ -273,7 +284,7 @@ def evaluate_model_ev(
 
             # Special identical-state check: only E1/0/0 with all scores == 25000
             if (
-                str(wind) == "E"
+                wind_label == "E"
                 and int(rnd) == 1
                 and int(honba_b) == 0
                 and int(riichi_b) == 0

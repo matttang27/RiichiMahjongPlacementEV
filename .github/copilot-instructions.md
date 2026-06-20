@@ -35,5 +35,6 @@ Created by `data/unzip.py` in `rounds.db`:
 
 ## Gotchas / conventions
 - Default DB location is `data/rounds.db`.
+- Keep generated reports, model smoke-test outputs, and other run artifacts inside this repo; do not write project outputs to `C:\tmp`.
 - West rounds are skipped for training/eval unless `wind in ("E","S")`.
 - For EV correctness: prefer **calibration by EV buckets** as the primary check; RMSE is the proper loss for conditional mean; MAE is diagnostic only.
