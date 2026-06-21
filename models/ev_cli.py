@@ -2,9 +2,21 @@ import argparse
 from typing import List, Tuple
 
 try:
-    from .xgboost_model import MODEL_PATH, estimate_all_values, load_model
+    from .xgboost_model import (
+        SUPPORTED_TARGET_MODES,
+        default_model_path_for_features,
+        default_target_mode_for_features,
+        estimate_all_values,
+        load_model,
+    )
 except ImportError:  # Allows `python models/ev_cli.py`.
-    from xgboost_model import MODEL_PATH, estimate_all_values, load_model
+    from xgboost_model import (
+        SUPPORTED_TARGET_MODES,
+        default_model_path_for_features,
+        default_target_mode_for_features,
+        estimate_all_values,
+        load_model,
+    )
 
 
 def _parse_input(line: str) -> Tuple[str, int, int, int, List[int]]:
@@ -34,11 +46,27 @@ def _parse_input(line: str) -> Tuple[str, int, int, int, List[int]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Interactive EV predictor")
-    ap.add_argument("--model", default=str(MODEL_PATH), help="Path to XGBoost JSON model")
+    ap.add_argument(
+        "--features",
+        default="legacy",
+        choices=["legacy", "v1", "v2"],
+        help="Feature version expected by the model",
+    )
+    ap.add_argument(
+        "--target-mode",
+        default=None,
+        choices=list(SUPPORTED_TARGET_MODES),
+        help="Prediction target mode. Defaults by feature version.",
+    )
+    ap.add_argument("--model", default=None, help="Path to XGBoost JSON model")
     args = ap.parse_args()
 
-    model = load_model(args.model)
-    print(f"Loaded model: {args.model}")
+    model_path = args.model or str(default_model_path_for_features(args.features))
+    target_mode = args.target_mode or default_target_mode_for_features(args.features)
+    model = load_model(model_path)
+    print(f"Loaded model: {model_path}")
+    print(f"Feature version: {args.features}")
+    print(f"Target mode: {target_mode}")
     print("Enter: wind round honba riichi s1 s2 s3 s4 (scores in raw points).")
     print("Example:  E 1 1 0 25000 25000 25000 25000")
     print("Type 'quit' to exit.")
@@ -67,6 +95,8 @@ def main() -> None:
             honba=honba,
             riichi=riichi,
             scores_thousands=scores_thousands,
+            feature_version=args.features,
+            target_mode=target_mode,
         )
         evs = tuple(float(x) for x in evs)
         print(f"Predicted EVs (thousands, relative to 25k): "

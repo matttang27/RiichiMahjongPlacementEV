@@ -17,37 +17,54 @@ Notes on metrics:
 from __future__ import annotations
 
 import argparse
+import json
 import sqlite3
 import time
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 
 try:
+    from .features import is_supported_wind, normalize_wind_label
     from .helper import UMA, _get_round_count
-    from .xgboost_model import estimate_all_values, load_model
+    from .xgboost_model import (
+        default_evaluation_path_for_features,
+        default_model_path_for_features,
+        default_summary_path_for_features,
+        default_target_mode_for_features,
+        estimate_all_values,
+        load_model,
+        SUPPORTED_TARGET_MODES,
+    )
 except ImportError:  # Allows `python models/evaluate_model.py`.
+    from features import is_supported_wind, normalize_wind_label
     from helper import UMA, _get_round_count
-    from xgboost_model import estimate_all_values, load_model
+    from xgboost_model import (
+        default_evaluation_path_for_features,
+        default_model_path_for_features,
+        default_summary_path_for_features,
+        default_target_mode_for_features,
+        estimate_all_values,
+        load_model,
+        SUPPORTED_TARGET_MODES,
+    )
 
 
 # Last 10% of database is for validation by default
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_VALIDATE_SPLIT = 0.1
 DEFAULT_DB_PATH = str(REPO_ROOT / "data" / "rounds.db")
-DEFAULT_MODEL_PATH = str(Path(__file__).resolve().parent / "xgboost.json")
 DEFAULT_CALIBRATION_BUCKETS = 20
 
-DEFAULT_OUT_PATH = str(Path(__file__).resolve().parent / "evaluation_report.txt")
 DEFAULT_GROUP_CALIB_MIN_SAMPLES = 200  # measured in seat-samples (4 per round)
 
-SUPPORTED_WINDS = {"E", "S", 0, 1}
-WIND_LABELS = {"E": "E", "S": "S", 0: "E", 1: "S"}
-
 model = None
+current_feature_version = "legacy"
+current_target_mode = "residual_uma"
 
 
 def predict(wind, round_num, honba, riichi, scores_pts) -> tuple[float, float, float, float]:
@@ -63,6 +80,8 @@ def predict(wind, round_num, honba, riichi, scores_pts) -> tuple[float, float, f
         honba=honba,
         riichi=riichi,
         scores_thousands=scores_div,
+        feature_version=current_feature_version,
+        target_mode=current_target_mode,
     )
     return evs
 
@@ -88,9 +107,9 @@ def _format_group_key(key: tuple[str, int, int, int]) -> str:
 # Buckets similar model EV together to see whether the actual EV mean matches.
 def _print_calibration_by_EV_buckets(
     actual: np.ndarray, model: np.ndarray, buckets: int
-) -> list[str]:
+) -> tuple[list[str], float]:
     if buckets <= 0 or actual.size == 0:
-        return []
+        return [], float("nan")
 
     buckets = max(min(buckets, int(actual.size)), 1)
 
@@ -113,10 +132,11 @@ def _print_calibration_by_EV_buckets(
         diff = ma - mp
         total_diff += abs(diff)
         lines.append(f"{idx:02d}\t{s.size}\t{mp:+.3f}\t\t{ma:+.3f}\t\t{diff:+.3f}")
+    avg_abs_diff = total_diff / float(len(splits))
     lines.append(
-        f"Avg abs diff over all buckets: {total_diff / float(len(splits)):+.3f} - note this changes with #buckets"
+        f"Avg abs diff over all buckets: {avg_abs_diff:+.3f} - note this changes with #buckets"
     )
-    return lines
+    return lines, avg_abs_diff
 
 
 def _metrics_block(
@@ -198,14 +218,19 @@ def evaluate_model_ev(
     *,
     db_path: str,
     model_path: str,
+    feature_version: str,
+    target_mode: str,
     validate_split: float,
     max_rounds: int | None,
     calibration_buckets: int,
-    out_path: str
+    out_path: str,
+    summary_out_path: str | None,
 ) -> dict:
     t0 = time.perf_counter()
 
-    global model
+    global model, current_feature_version, current_target_mode
+    current_feature_version = feature_version
+    current_target_mode = target_mode
     model = load_model(model_path)
 
     if not (0.0 < validate_split < 1.0):
@@ -250,13 +275,13 @@ def evaluate_model_ev(
             wind, rnd, honba, riichi = row[0], int(row[1]), int(row[2]), int(row[3])
 
             # Match repo convention: evaluate only East/South games.
-            if wind not in SUPPORTED_WINDS:
+            if not is_supported_wind(wind):
                 skipped_rounds += 1
                 continue
 
             honba_b = min(honba, 5)
             riichi_b = min(riichi, 5)
-            wind_label = WIND_LABELS[wind]
+            wind_label = normalize_wind_label(wind)
             gkey = (wind_label, int(rnd), honba_b, riichi_b)
 
             s_start_pts = list(row[4:8])
@@ -318,6 +343,8 @@ def evaluate_model_ev(
     # Build report (single string -> console + file)
     report_lines: list[str] = []
     report_lines.append(f"Using model: {model_path}")
+    report_lines.append(f"Feature version: {feature_version}")
+    report_lines.append(f"Target mode: {target_mode}")
     report_lines.append(f"DB: {db_path}")
     report_lines.append(f"Validate split (last N%): {validate_split}")
     report_lines.append(f"Max rounds cap: {max_rounds}")
@@ -336,12 +363,12 @@ def evaluate_model_ev(
     )
 
     # Overall calibration (kept)
+    calibration_avg_abs_diff = float("nan")
     if count_rounds != 0:
-        report_lines.extend(
-            _print_calibration_by_EV_buckets(
-                actual=actual, model=model_arr, buckets=int(calibration_buckets)
-            )
+        calibration_lines, calibration_avg_abs_diff = _print_calibration_by_EV_buckets(
+            actual=actual, model=model_arr, buckets=int(calibration_buckets)
         )
+        report_lines.extend(calibration_lines)
 
     # Special identical-state section (E1 honba=0 riichi=0, all 25000)
     report_lines.append("\n\n=== SPECIAL CHECK: IDENTICAL START STATE (E1 honba=0 riichi=0, all 25000) ===")
@@ -412,7 +439,15 @@ def evaluate_model_ev(
     print(f"Wrote evaluation report to: {out_file.resolve()} (took {elapsed_s:.2f}s)")
 
     if count_rounds == 0:
-        return {
+        result = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "model_path": str(Path(model_path).resolve()),
+            "feature_version": feature_version,
+            "target_mode": target_mode,
+            "db_path": str(Path(db_path).resolve()),
+            "validate_split": validate_split,
+            "max_rounds": max_rounds,
+            "calibration_buckets": calibration_buckets,
             "model_mse": float("nan"),
             "model_rmse": float("nan"),
             "model_mae": float("nan"),
@@ -424,6 +459,9 @@ def evaluate_model_ev(
             "skipped_rounds": skipped_rounds,
             "out_path": str(out_file),
         }
+        if summary_out_path is not None:
+            _write_summary(result, summary_out_path)
+        return result
 
     model_mse = _mse(actual, model_arr)
     model_rmse = float(np.sqrt(model_mse))
@@ -433,11 +471,20 @@ def evaluate_model_ev(
     avg_sum_model = total_sum_model / max(count_rounds, 1)
     sum_model_rmse = float(np.sqrt(sum_model_squares / max(count_rounds, 1)))
 
-    return {
+    result = {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "model_path": str(Path(model_path).resolve()),
+        "feature_version": feature_version,
+        "target_mode": target_mode,
+        "db_path": str(Path(db_path).resolve()),
+        "validate_split": validate_split,
+        "max_rounds": max_rounds,
+        "calibration_buckets": calibration_buckets,
         "model_mse": model_mse,
         "model_rmse": model_rmse,
         "model_mae": model_mae,
         "model_corr": model_corr,
+        "calibration_avg_abs_diff": calibration_avg_abs_diff,
         "avg_sum_model": avg_sum_model,
         "sum_model_rmse": sum_model_rmse,
         "max_abs_sum_model": abs_sum_model_max,
@@ -445,6 +492,16 @@ def evaluate_model_ev(
         "skipped_rounds": skipped_rounds,
         "out_path": str(out_file),
     }
+    if summary_out_path is not None:
+        _write_summary(result, summary_out_path)
+    return result
+
+
+def _write_summary(result: dict, summary_out_path: str) -> None:
+    p = Path(summary_out_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"Wrote evaluation summary to: {p.resolve()}")
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -452,8 +509,20 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--db", default=DEFAULT_DB_PATH, help="Path to SQLite rounds.db")
     p.add_argument(
         "--model",
-        default=DEFAULT_MODEL_PATH,
-        help="Path to default JSON model",
+        default=None,
+        help="Path to XGBoost JSON model. Defaults by feature version.",
+    )
+    p.add_argument(
+        "--features",
+        default="legacy",
+        choices=["legacy", "v1", "v2"],
+        help="Feature version expected by the model",
+    )
+    p.add_argument(
+        "--target-mode",
+        default=None,
+        choices=list(SUPPORTED_TARGET_MODES),
+        help="Prediction target mode. Defaults by feature version.",
     )
     p.add_argument(
         "--validate-split",
@@ -475,22 +544,41 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     p.add_argument(
         "--out",
-        default=DEFAULT_OUT_PATH,
-        help="Where to write the full text report",
+        default=None,
+        help="Where to write the full text report. Defaults by feature version.",
+    )
+    p.add_argument(
+        "--summary-out",
+        default=None,
+        help="Where to write compact JSON metrics. Defaults by feature version.",
     )
     return p.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> dict:
     args = _parse_args(argv)
-    print(f"Using JSON model: {args.model}")
+    model_path = Path(args.model) if args.model is not None else default_model_path_for_features(args.features)
+    out_path = Path(args.out) if args.out is not None else default_evaluation_path_for_features(args.features)
+    target_mode = args.target_mode or default_target_mode_for_features(args.features)
+    summary_out_path = (
+        Path(args.summary_out)
+        if args.summary_out is not None
+        else default_summary_path_for_features(args.features)
+    )
+
+    print(f"Using JSON model: {model_path}")
+    print(f"Using feature version: {args.features}")
+    print(f"Using target mode: {target_mode}")
     return evaluate_model_ev(
         db_path=str(args.db),
-        model_path=str(args.model),
+        model_path=str(model_path),
+        feature_version=args.features,
+        target_mode=target_mode,
         validate_split=float(args.validate_split),
         max_rounds=args.max_rounds,
         calibration_buckets=int(args.calibration_buckets),
-        out_path=str(args.out),
+        out_path=str(out_path),
+        summary_out_path=str(summary_out_path),
     )
 
 

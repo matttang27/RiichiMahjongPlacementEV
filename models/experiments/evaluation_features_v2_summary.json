@@ -1,0 +1,21 @@
+{
+  "avg_sum_model": 0.0,
+  "calibration_avg_abs_diff": 0.8392895881086588,
+  "calibration_buckets": 20,
+  "db_path": "C:\\Users\\mattt\\Documents\\MatthewPrograms\\RiichiMahjongPlacementEV\\data\\rounds.db",
+  "feature_version": "v2",
+  "max_abs_sum_model": 0.0,
+  "max_rounds": null,
+  "model_corr": 0.5877691200111823,
+  "model_mae": 60.29538345336914,
+  "model_mse": 6114.98486328125,
+  "model_path": "C:\\Users\\mattt\\Documents\\MatthewPrograms\\RiichiMahjongPlacementEV\\models\\experiments\\xgboost_features_v2.json",
+  "model_rmse": 78.19836867404108,
+  "out_path": "C:\\Users\\mattt\\Documents\\MatthewPrograms\\RiichiMahjongPlacementEV\\models\\experiments\\evaluation_features_v2.txt",
+  "rounds": 147357,
+  "skipped_rounds": 817,
+  "sum_model_rmse": 0.0,
+  "target_mode": "direct_ev",
+  "timestamp": "2026-06-20T17:50:37",
+  "validate_split": 0.1
+}

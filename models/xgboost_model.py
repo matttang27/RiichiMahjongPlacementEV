@@ -12,13 +12,36 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ROUNDS_DB_PATH = REPO_ROOT / "data" / "rounds.db"
 # Keep model path relative to this module so it works in deployments.
 MODEL_PATH = Path(__file__).resolve().parent / "xgboost.json"
+EXPERIMENTS_DIR = Path(__file__).resolve().parent / "experiments"
+SUPPORTED_TARGET_MODES = ("residual_uma", "direct_ev")
+DEFAULT_TARGET_MODE_BY_FEATURE = {
+    "legacy": "residual_uma",
+    "v1": "residual_uma",
+    "v2": "direct_ev",
+}
 
 try:
+    from .features import (
+        baseline_targets_thousands,
+        encode_state_row,
+        encode_state_rows,
+        final_evs_thousands,
+        feature_count,
+        get_feature_names,
+        is_supported_wind,
+    )
     from .helper import compute_uma
 except ImportError:  # Allows `python models/xgboost_model.py`.
+    from features import (
+        baseline_targets_thousands,
+        encode_state_row,
+        encode_state_rows,
+        final_evs_thousands,
+        feature_count,
+        get_feature_names,
+        is_supported_wind,
+    )
     from helper import compute_uma
-
-SUPPORTED_WINDS = {"E", "S", 0, 1}
 
 
 # ---------- Feature encoding ----------
@@ -30,6 +53,7 @@ def _encode_state_row(
     riichi: int,
     scores_thousands,
     seat: int,
+    feature_version: str = "legacy",
 ) -> np.ndarray:
     """
     Encode a single game state as features.
@@ -43,41 +67,164 @@ def _encode_state_row(
 
     Returns shape (1, num_features).
     """
-    wind_map = {"E": 0, "S": 1, 0: 0, 1: 1}
+    return encode_state_row(
+        wind=wind,
+        round_num=round_num,
+        honba=honba,
+        riichi=riichi,
+        scores_thousands=scores_thousands,
+        seat=seat,
+        feature_version=feature_version,
+    ).reshape(1, -1)
+
+
+def default_model_path_for_features(feature_version: str) -> Path:
+    get_feature_names(feature_version)
+    if feature_version == "legacy":
+        return MODEL_PATH
+    return EXPERIMENTS_DIR / f"xgboost_features_{feature_version}.json"
+
+
+def default_evaluation_path_for_features(feature_version: str) -> Path:
+    get_feature_names(feature_version)
+    if feature_version == "legacy":
+        return Path(__file__).resolve().parent / "evaluation_current.txt"
+    return EXPERIMENTS_DIR / f"evaluation_features_{feature_version}.txt"
+
+
+def default_summary_path_for_features(feature_version: str) -> Path:
+    get_feature_names(feature_version)
+    if feature_version == "legacy":
+        return Path(__file__).resolve().parent / "evaluation_current_summary.json"
+    return EXPERIMENTS_DIR / f"evaluation_features_{feature_version}_summary.json"
+
+
+def default_target_mode_for_features(feature_version: str) -> str:
+    get_feature_names(feature_version)
+    return DEFAULT_TARGET_MODE_BY_FEATURE[feature_version]
+
+
+def validate_target_mode(target_mode: str) -> str:
+    if target_mode not in SUPPORTED_TARGET_MODES:
+        raise ValueError(
+            f"Unsupported target mode: {target_mode!r}. "
+            f"Use one of {SUPPORTED_TARGET_MODES}."
+        )
+    return target_mode
+
+
+def monotone_constraints_for_features(feature_version: str) -> tuple[int, ...] | None:
+    if feature_version != "v2":
+        return None
+
+    positive_features = {
+        "rot_score_0_th",
+        "self_score_th",
+        "gap_to_rel1_th",
+        "gap_to_rel2_th",
+        "gap_to_rel3_th",
+        "self_vs_max_other_th",
+        "self_vs_min_other_th",
+    }
+    negative_features = {
+        "rot_score_1_th",
+        "rot_score_2_th",
+        "rot_score_3_th",
+    }
+
+    constraints = []
+    for name in get_feature_names(feature_version):
+        if name in positive_features:
+            constraints.append(1)
+        elif name in negative_features:
+            constraints.append(-1)
+        else:
+            constraints.append(0)
+    return tuple(constraints)
+
+
+def _count_rounds_to_scan(db_path: str | Path, max_rows: int | None) -> int:
+    if max_rows is not None:
+        return int(max_rows)
+
+    conn = sqlite3.connect(db_path)
     try:
-        w = wind_map[wind]
-    except KeyError:
-        raise ValueError(f"Unsupported wind: {wind!r}. Use 'E' or 'S' or 0/1.")
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM rounds")
+        return int(cur.fetchone()[0])
+    finally:
+        conn.close()
 
-    h_b = min(int(honba), 5)
-    r_b = min(int(riichi), 5)
 
-    if len(scores_thousands) != 4:
-        raise ValueError("scores_thousands must have length 4")
+def _resize_training_arrays(
+    X: np.ndarray,
+    y: np.ndarray,
+    min_rows: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    new_rows = max(min_rows, int(X.shape[0] * 1.5), X.shape[0] + 4096)
+    X_new = np.empty((new_rows, X.shape[1]), dtype=np.float32)
+    y_new = np.empty((new_rows,), dtype=np.float32)
+    X_new[: X.shape[0], :] = X
+    y_new[: y.shape[0]] = y
+    return X_new, y_new
 
-    # Rotate so that this seat is position 0
-    p = [float(scores_thousands[(seat + k) % 4]) for k in range(4)]
 
-    row = np.array(
-        [
-            float(w),
-            float(round_num),
-            float(h_b),
-            float(r_b),
-            float(seat),
-            p[0],
-            p[1],
-            p[2],
-            p[3],
-        ],
-        dtype=np.float32,
+def _store_training_round(
+    *,
+    X: np.ndarray,
+    y: np.ndarray,
+    out_idx: int,
+    wind,
+    round_num: int,
+    honba: int,
+    riichi: int,
+    start_scores_pts: Sequence[int] | Sequence[float],
+    final_scores_pts: Sequence[int] | Sequence[float],
+    feature_version: str,
+    target_mode: str,
+) -> int:
+    scores_thousands = [s / 1000.0 for s in start_scores_pts]
+    X_rows = encode_state_rows(
+        wind=wind,
+        round_num=round_num,
+        honba=honba,
+        riichi=riichi,
+        scores_thousands=scores_thousands,
+        feature_version=feature_version,
     )
-    return row.reshape(1, -1)
+
+    if target_mode == "residual_uma":
+        baseline_thousands = baseline_targets_thousands(start_scores_pts)
+        final_uma_pts = compute_uma(final_scores_pts)
+        for seat in range(4):
+            target_thousands = (
+                float(final_scores_pts[seat]) + float(final_uma_pts[seat])
+            ) / 1000.0
+            X[out_idx, :] = X_rows[seat]
+            y[out_idx] = target_thousands - baseline_thousands[seat]
+            out_idx += 1
+        return out_idx
+
+    if target_mode == "direct_ev":
+        final_evs = final_evs_thousands(final_scores_pts)
+        for seat in range(4):
+            X[out_idx, :] = X_rows[seat]
+            y[out_idx] = final_evs[seat]
+            out_idx += 1
+        return out_idx
+
+    validate_target_mode(target_mode)
+    return out_idx
 
 
 # ---------- Dataset building from rounds.db ----------
 
-def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | None = None):
+def build_training_matrix(
+    db_path: str | Path = ROUNDS_DB_PATH,
+    max_rows: int | None = None,
+    feature_version: str = "legacy",
+    target_mode: str | None = None,
+):
     """
     Read rounds from SQLite and build (X, y):
 
@@ -89,6 +236,10 @@ def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | 
       y = (final_score + final_uma)/1000 - (start_score + start_uma)/1000
         = residual over the "no change" baseline, in thousands.
     """
+    if target_mode is None:
+        target_mode = default_target_mode_for_features(feature_version)
+    validate_target_mode(target_mode)
+
     conn = sqlite3.connect(db_path)
     try:
         cur = conn.cursor()
@@ -102,10 +253,13 @@ def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | 
             """
         )
 
-        X_rows: list[np.ndarray] = []
-        y_vals: list[float] = []
+        n_features = feature_count(feature_version)
+        initial_round_capacity = max(_count_rounds_to_scan(db_path, max_rows), 1)
+        X = np.empty((initial_round_capacity * 4, n_features), dtype=np.float32)
+        y = np.empty((initial_round_capacity * 4,), dtype=np.float32)
 
         count_rows = 0
+        out_idx = 0
 
         while True:
             row = cur.fetchone()
@@ -118,44 +272,28 @@ def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | 
             riichi = int(row[3])
 
             # Skip West rounds for simplicity (continuation hands)
-            if wind not in SUPPORTED_WINDS:
+            if not is_supported_wind(wind):
                 continue
 
             s_start_pts = list(row[4:8])
             s_final_pts = list(row[8:12])
 
-            # Convert start scores to thousands for features
-            scores_thousands = [s / 1000.0 for s in s_start_pts]
+            if out_idx + 4 > X.shape[0]:
+                X, y = _resize_training_arrays(X, y, out_idx + 4)
 
-            # Uma based on start + final
-            start_uma_pts = compute_uma(s_start_pts)
-            final_uma_pts = compute_uma(s_final_pts)
-
-            for seat in range(4):
-                x = _encode_state_row(
-                    wind=wind,
-                    round_num=round_num,
-                    honba=honba,
-                    riichi=riichi,
-                    scores_thousands=scores_thousands,
-                    seat=seat,
-                )
-
-                # Baseline: "no change" EV target in thousands
-                baseline_thousands = (
-                    s_start_pts[seat] + start_uma_pts[seat]
-                ) / 1000.0
-
-                # True final target in thousands
-                target_thousands = (
-                    s_final_pts[seat] + final_uma_pts[seat]
-                ) / 1000.0
-
-                # Residual over baseline
-                y_residual = target_thousands - baseline_thousands
-
-                X_rows.append(x[0])
-                y_vals.append(y_residual)
+            out_idx = _store_training_round(
+                X=X,
+                y=y,
+                out_idx=out_idx,
+                wind=wind,
+                round_num=round_num,
+                honba=honba,
+                riichi=riichi,
+                start_scores_pts=s_start_pts,
+                final_scores_pts=s_final_pts,
+                feature_version=feature_version,
+                target_mode=target_mode,
+            )
 
             count_rows += 1
             if max_rows is not None and count_rows >= max_rows:
@@ -163,23 +301,37 @@ def build_training_matrix(db_path: str | Path = ROUNDS_DB_PATH, max_rows: int | 
     finally:
         conn.close()
 
-    if not X_rows:
+    if out_idx == 0:
         raise RuntimeError("No data loaded from rounds.db. Is the table empty?")
 
-    X = np.stack(X_rows, axis=0)
-    y = np.array(y_vals, dtype=np.float32)
+    X = X[:out_idx, :]
+    y = y[:out_idx]
 
-    print(f"Built training matrix: X.shape={X.shape}, y.shape={y.shape}")
+    print(
+        f"Built training matrix: X.shape={X.shape}, y.shape={y.shape}, "
+        f"feature_version={feature_version}, target_mode={target_mode}"
+    )
     return X, y
 
 
 
 # ---------- Model training / saving / loading ----------
 
-def train_model(X: np.ndarray, y: np.ndarray) -> xgb.XGBRegressor:
+def train_model(
+    X: np.ndarray,
+    y: np.ndarray,
+    *,
+    feature_version: str = "legacy",
+    target_mode: str | None = None,
+) -> xgb.XGBRegressor:
     """
     Train an XGBoost regressor on the given data.
     """
+    if target_mode is None:
+        target_mode = default_target_mode_for_features(feature_version)
+    validate_target_mode(target_mode)
+
+    constraints = monotone_constraints_for_features(feature_version)
     model = xgb.XGBRegressor(
         n_estimators=400,
         max_depth=7,
@@ -189,9 +341,14 @@ def train_model(X: np.ndarray, y: np.ndarray) -> xgb.XGBRegressor:
         objective="reg:squarederror",
         n_jobs=-1,
         tree_method="hist",
+        monotone_constraints=constraints,
     )
 
     model.fit(X, y)
+    model.get_booster().set_attr(
+        feature_version=feature_version,
+        target_mode=target_mode,
+    )
     return model
 
 
@@ -217,6 +374,8 @@ def estimate_value_for_seat(
     riichi: int,
     scores_thousands,
     seat: int,
+    feature_version: str = "legacy",
+    target_mode: str | None = None,
 ) -> float:
     """
     Return EV in thousands for one seat:
@@ -226,6 +385,10 @@ def estimate_value_for_seat(
     where model predicts the residual over the baseline:
         residual = target_thousands - baseline_thousands
     """
+    if target_mode is None:
+        target_mode = default_target_mode_for_features(feature_version)
+    validate_target_mode(target_mode)
+
     # Reconstruct start scores in points from thousands
     s_start_pts = [int(round(s * 1000)) for s in scores_thousands]
 
@@ -243,13 +406,17 @@ def estimate_value_for_seat(
         riichi=riichi,
         scores_thousands=scores_thousands,
         seat=seat,
+        feature_version=feature_version,
     )
 
     # Model predicts residual over baseline, in thousands
-    residual_thousands = float(model.predict(x)[0])
+    prediction = float(model.predict(x)[0])
+
+    if target_mode == "direct_ev":
+        return prediction
 
     # Final predicted target in thousands
-    y_thousands = baseline_thousands + residual_thousands
+    y_thousands = baseline_thousands + prediction
 
     # EV relative to 25k
     value = y_thousands - 25.0
@@ -263,6 +430,8 @@ def estimate_all_values(
     honba: int,
     riichi: int,
     scores_thousands,
+    feature_version: str = "legacy",
+    target_mode: str | None = None,
 ):
     """
     Return (EV0, EV1, EV2, EV3) in thousands for all players.
@@ -273,7 +442,9 @@ def estimate_all_values(
       - recenter so the four predicted (score+uma)/1000 sum to 100,
         ensuring EVs are zero-sum.
     """
-    import numpy as np
+    if target_mode is None:
+        target_mode = default_target_mode_for_features(feature_version)
+    validate_target_mode(target_mode)
 
     # Reconstruct start scores and baseline for all seats
     s_start_pts = [int(round(s * 1000)) for s in scores_thousands]
@@ -283,27 +454,25 @@ def estimate_all_values(
         for i in range(4)
     ]
 
-    # Build features for all seats
-    X_rows = []
-    for seat in range(4):
-        x = _encode_state_row(
-            wind=wind,
-            round_num=round_num,
-            honba=honba,
-            riichi=riichi,
-            scores_thousands=scores_thousands,
-            seat=seat,
-        )
-        X_rows.append(x[0])
+    X = encode_state_rows(
+        wind=wind,
+        round_num=round_num,
+        honba=honba,
+        riichi=riichi,
+        scores_thousands=scores_thousands,
+        feature_version=feature_version,
+    )
 
-    X = np.stack(X_rows, axis=0)  # shape (4, num_features)
+    predictions = model.predict(X)  # shape (4,)
 
-    # Model predicts residuals in thousands
-    residuals = model.predict(X)  # shape (4,)
+    if target_mode == "direct_ev":
+        evs_raw = [float(predictions[i]) for i in range(4)]
+        shift = sum(evs_raw) / 4.0
+        return tuple(ev - shift for ev in evs_raw)
 
-    # Add baseline back
+    # Add baseline back for residual-over-current-uma models.
     y_thousands = [
-        baseline_thousands[i] + float(residuals[i]) for i in range(4)
+        baseline_thousands[i] + float(predictions[i]) for i in range(4)
     ]
 
     # Enforce sum(y) = 100 exactly (zero-sum EVs)
@@ -321,22 +490,41 @@ def estimate_all_values(
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Train the XGBoost EV model")
     p.add_argument("--db", default=str(ROUNDS_DB_PATH), help="Path to rounds.db")
-    p.add_argument("--model", default=str(MODEL_PATH), help="Where to save the XGBoost JSON model")
+    p.add_argument(
+        "--features",
+        default="legacy",
+        choices=["legacy", "v1", "v2"],
+        help="Feature version to train",
+    )
+    p.add_argument(
+        "--target-mode",
+        default=None,
+        choices=list(SUPPORTED_TARGET_MODES),
+        help="Training target. Defaults by feature version.",
+    )
+    p.add_argument("--model", default=None, help="Where to save the XGBoost JSON model")
     p.add_argument("--max-rows", type=int, default=None, help="Optional cap for quick training smoke tests")
     return p.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None):
     args = _parse_args(argv)
+    model_path = Path(args.model) if args.model is not None else default_model_path_for_features(args.features)
+    target_mode = args.target_mode or default_target_mode_for_features(args.features)
 
     print(f"Building training matrix from {args.db}...")
-    X, y = build_training_matrix(args.db, max_rows=args.max_rows)
+    X, y = build_training_matrix(
+        args.db,
+        max_rows=args.max_rows,
+        feature_version=args.features,
+        target_mode=target_mode,
+    )
 
     print("Training model...")
-    model = train_model(X, y)
+    model = train_model(X, y, feature_version=args.features, target_mode=target_mode)
 
     print("Saving model...")
-    save_model(model, args.model)
+    save_model(model, model_path)
 
     # Tiny sanity check example (you can delete this later):
     ex_vals = estimate_all_values(
@@ -346,6 +534,8 @@ def main(argv: Sequence[str] | None = None):
         honba=0,
         riichi=0,
         scores_thousands=[0.0, 15.0, 35.0, 50.0],
+        feature_version=args.features,
+        target_mode=target_mode,
     )
     print("Example S4 EVs [0,15,35,50]:", ex_vals)
 
