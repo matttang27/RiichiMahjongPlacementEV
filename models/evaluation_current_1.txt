@@ -1,8 +1,9 @@
 === TIMING ===
-Total analysis time: 399.55s
+Total analysis time: 370.79s
 
-Using model: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\models\experiments\xgboost_features_v1.json
-Feature version: v1
+Using model: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\models\xgboost.json
+Feature version: legacy
+Target mode: residual_uma
 DB: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\data\rounds.db
 Validate split (last N%): 0.1
 Max rounds cap: None
@@ -16,42 +17,67 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6085.1030
-Model RMSE            : 78.0071
-Model MAE (diagnostic): 60.1296
+Model MSE             : 6224.7852
+Model RMSE            : 78.8973
+Model MAE (diagnostic): 60.6755
 
 --- Correlation with true EV ---
-Model corr            : 0.5904
+Model corr            : 0.5780
 
 --- Calibration by predicted-EV buckets (primary check) ---
 bucket	count	mean_pred	mean_actual	diff
-01	29472	-128.872		-130.276		-1.404
-02	29472	-92.469		-93.055		-0.585
-03	29472	-66.694		-67.266		-0.573
-04	29472	-48.144		-48.870		-0.726
-05	29472	-34.582		-35.082		-0.500
-06	29472	-24.482		-25.539		-1.057
-07	29472	-15.868		-15.853		+0.015
-08	29472	-9.042		-7.980		+1.062
-09	29471	-2.956		-2.833		+0.124
-10	29471	-0.156		-0.732		-0.576
-11	29471	+0.152		+0.777		+0.625
-12	29471	+2.996		+3.172		+0.176
-13	29471	+10.746		+11.000		+0.253
-14	29471	+20.856		+21.734		+0.878
-15	29471	+31.650		+32.451		+0.801
-16	29471	+42.724		+43.553		+0.829
-17	29471	+54.091		+53.728		-0.363
-18	29471	+67.813		+68.625		+0.813
-19	29471	+85.080		+85.323		+0.244
-20	29471	+107.171		+106.886		-0.286
-Avg abs diff over all buckets: +0.594 - note this changes with #buckets
+01	29472	-129.542		-125.816		+3.727
+02	29472	-96.544		-90.811		+5.733
+03	29472	-72.340		-65.678		+6.661
+04	29472	-50.647		-48.304		+2.343
+05	29472	-35.452		-34.925		+0.526
+06	29472	-24.451		-24.501		-0.049
+07	29472	-15.875		-15.656		+0.219
+08	29472	-8.422		-7.443		+0.979
+09	29471	-1.900		-3.264		-1.364
+10	29471	-0.095		-0.897		-0.802
+11	29471	+0.612		+0.079		-0.533
+12	29471	+5.631		+3.365		-2.266
+13	29471	+13.320		+10.162		-3.158
+14	29471	+22.836		+19.935		-2.901
+15	29471	+32.920		+30.329		-2.591
+16	29471	+43.614		+41.288		-2.326
+17	29471	+54.857		+52.881		-1.976
+18	29471	+68.654		+67.401		-1.253
+19	29471	+85.612		+84.930		-0.682
+20	29471	+107.227		+106.688		-0.539
+Avg abs diff over all buckets: +2.031 - note this changes with #buckets
+
+
+=== EMPIRICAL ORACLE / NOISE FLOOR CHECK ===
+Oracle uses leave-one-out group-average actual EV from the validation slice.
+This is not the true perfect RMSE; it is a repeated/similar-state noise-floor diagnostic.
+Minimum group size: 20 rounds
+Coarse score bucket: nearest 1000 points
+
+Exact-state oracle
+Eligible groups       : 190
+Covered rounds        : 24206 (16.43% of evaluated rounds)
+Seat-samples          : 96824
+Oracle RMSE           : 95.9398
+Oracle MAE            : 78.4215
+Model RMSE same subset: 95.7235
+Model MAE same subset : 78.1919
+
+Coarse-state oracle
+Eligible groups       : 172
+Covered rounds        : 25698 (17.44% of evaluated rounds)
+Seat-samples          : 102792
+Oracle RMSE           : 95.7405
+Oracle MAE            : 78.2630
+Model RMSE same subset: 95.6291
+Model MAE same subset : 78.1477
 
 
 === SPECIAL CHECK: IDENTICAL START STATE (E1 honba=0 riichi=0, all 25000) ===
 Rounds in this exact state: 13960
 Avg ACTUAL EV by seat: +1.763, -0.612, -0.917, -0.281
-MODEL prediction for this state (single call): +0.298, -0.056, -0.262, +0.020
+MODEL prediction for this state (single call): +0.417, -0.447, +0.130, -0.100
 
 
 === PER-ROUND-STATE BREAKDOWN (METRICS ONLY) ===
@@ -71,12 +97,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9393.3477
+Model MSE             : 9393.3447
 Model RMSE            : 96.9193
-Model MAE (diagnostic): 78.8843
+Model MAE (diagnostic): 78.8851
 
 --- Correlation with true EV ---
-Model corr            : 0.0102
+Model corr            : 0.0075
 
 ------------------------------------------------------------------------
 Group: E1 honba=1 riichi=0
@@ -91,12 +117,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8503.4551
-Model RMSE            : 92.2142
-Model MAE (diagnostic): 75.2744
+Model MSE             : 8594.0693
+Model RMSE            : 92.7042
+Model MAE (diagnostic): 75.8229
 
 --- Correlation with true EV ---
-Model corr            : 0.3282
+Model corr            : 0.3145
 
 ------------------------------------------------------------------------
 Group: E1 honba=1 riichi=1
@@ -111,12 +137,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9313.4980
-Model RMSE            : 96.5065
-Model MAE (diagnostic): 78.9956
+Model MSE             : 9395.5801
+Model RMSE            : 96.9308
+Model MAE (diagnostic): 79.6287
 
 --- Correlation with true EV ---
-Model corr            : 0.0912
+Model corr            : 0.0568
 
 ------------------------------------------------------------------------
 Group: E1 honba=1 riichi=2
@@ -131,12 +157,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9257.7803
-Model RMSE            : 96.2174
-Model MAE (diagnostic): 78.6813
+Model MSE             : 9213.4287
+Model RMSE            : 95.9866
+Model MAE (diagnostic): 78.7383
 
 --- Correlation with true EV ---
-Model corr            : 0.1476
+Model corr            : 0.1438
 
 ------------------------------------------------------------------------
 Group: E1 honba=1 riichi=3
@@ -151,12 +177,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 11209.0195
-Model RMSE            : 105.8727
-Model MAE (diagnostic): 85.8126
+Model MSE             : 11375.3506
+Model RMSE            : 106.6553
+Model MAE (diagnostic): 86.5245
 
 --- Correlation with true EV ---
-Model corr            : -0.3561
+Model corr            : -0.2721
 
 ------------------------------------------------------------------------
 Group: E1 honba=1 riichi=4
@@ -171,12 +197,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10347.7393
-Model RMSE            : 101.7238
-Model MAE (diagnostic): 84.7901
+Model MSE             : 11496.0908
+Model RMSE            : 107.2198
+Model MAE (diagnostic): 90.5709
 
 --- Correlation with true EV ---
-Model corr            : 0.0102
+Model corr            : -0.3107
 
 ------------------------------------------------------------------------
 Group: E1 honba=2 riichi=0
@@ -191,12 +217,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7455.2573
-Model RMSE            : 86.3438
-Model MAE (diagnostic): 69.7532
+Model MSE             : 7718.5088
+Model RMSE            : 87.8550
+Model MAE (diagnostic): 70.7429
 
 --- Correlation with true EV ---
-Model corr            : 0.4858
+Model corr            : 0.4597
 
 ------------------------------------------------------------------------
 Group: E1 honba=2 riichi=1
@@ -211,12 +237,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8632.5439
-Model RMSE            : 92.9115
-Model MAE (diagnostic): 76.1048
+Model MSE             : 8977.7500
+Model RMSE            : 94.7510
+Model MAE (diagnostic): 77.7295
 
 --- Correlation with true EV ---
-Model corr            : 0.3162
+Model corr            : 0.2833
 
 ------------------------------------------------------------------------
 Group: E1 honba=2 riichi=2
@@ -231,12 +257,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8788.5400
-Model RMSE            : 93.7472
-Model MAE (diagnostic): 77.3719
+Model MSE             : 8894.0664
+Model RMSE            : 94.3084
+Model MAE (diagnostic): 78.4634
 
 --- Correlation with true EV ---
-Model corr            : 0.2302
+Model corr            : 0.2226
 
 ------------------------------------------------------------------------
 Group: E1 honba=2 riichi=3
@@ -251,12 +277,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10228.6445
-Model RMSE            : 101.1368
-Model MAE (diagnostic): 81.8871
+Model MSE             : 10825.2861
+Model RMSE            : 104.0446
+Model MAE (diagnostic): 85.8944
 
 --- Correlation with true EV ---
-Model corr            : -0.1679
+Model corr            : -0.1475
 
 ------------------------------------------------------------------------
 Group: E1 honba=2 riichi=4
@@ -271,12 +297,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 11495.8428
-Model RMSE            : 107.2187
-Model MAE (diagnostic): 88.1874
+Model MSE             : 11843.6035
+Model RMSE            : 108.8283
+Model MAE (diagnostic): 87.2766
 
 --- Correlation with true EV ---
-Model corr            : -0.1161
+Model corr            : -0.0534
 
 ------------------------------------------------------------------------
 Group: E1 honba=3 riichi=0
@@ -291,12 +317,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6610.8359
-Model RMSE            : 81.3070
-Model MAE (diagnostic): 64.3821
+Model MSE             : 6968.3687
+Model RMSE            : 83.4768
+Model MAE (diagnostic): 65.6828
 
 --- Correlation with true EV ---
-Model corr            : 0.5865
+Model corr            : 0.5579
 
 ------------------------------------------------------------------------
 Group: E1 honba=3 riichi=1
@@ -311,12 +337,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7881.5488
-Model RMSE            : 88.7781
-Model MAE (diagnostic): 72.5666
+Model MSE             : 8535.7803
+Model RMSE            : 92.3893
+Model MAE (diagnostic): 74.6909
 
 --- Correlation with true EV ---
-Model corr            : 0.4403
+Model corr            : 0.3735
 
 ------------------------------------------------------------------------
 Group: E1 honba=3 riichi=2
@@ -331,12 +357,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8258.1318
-Model RMSE            : 90.8743
-Model MAE (diagnostic): 70.9531
+Model MSE             : 8677.3066
+Model RMSE            : 93.1521
+Model MAE (diagnostic): 72.9621
 
 --- Correlation with true EV ---
-Model corr            : 0.4017
+Model corr            : 0.3601
 
 ------------------------------------------------------------------------
 Group: E1 honba=3 riichi=3
@@ -351,12 +377,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10555.8301
-Model RMSE            : 102.7416
-Model MAE (diagnostic): 84.4411
+Model MSE             : 9682.0664
+Model RMSE            : 98.3975
+Model MAE (diagnostic): 80.4403
 
 --- Correlation with true EV ---
-Model corr            : 0.2049
+Model corr            : 0.3169
 
 ------------------------------------------------------------------------
 Group: E1 honba=3 riichi=4
@@ -371,12 +397,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7263.0156
-Model RMSE            : 85.2233
-Model MAE (diagnostic): 67.8459
+Model MSE             : 9025.6641
+Model RMSE            : 95.0035
+Model MAE (diagnostic): 80.1784
 
 --- Correlation with true EV ---
-Model corr            : 0.5885
+Model corr            : 0.3904
 
 ------------------------------------------------------------------------
 Group: E1 honba=4 riichi=0
@@ -391,12 +417,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6404.8525
-Model RMSE            : 80.0303
-Model MAE (diagnostic): 62.8810
+Model MSE             : 6563.7563
+Model RMSE            : 81.0170
+Model MAE (diagnostic): 63.3212
 
 --- Correlation with true EV ---
-Model corr            : 0.6254
+Model corr            : 0.6148
 
 ------------------------------------------------------------------------
 Group: E1 honba=4 riichi=1
@@ -411,12 +437,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6729.7891
-Model RMSE            : 82.0353
-Model MAE (diagnostic): 66.9432
+Model MSE             : 8003.7368
+Model RMSE            : 89.4636
+Model MAE (diagnostic): 71.7126
 
 --- Correlation with true EV ---
-Model corr            : 0.5868
+Model corr            : 0.4776
 
 ------------------------------------------------------------------------
 Group: E1 honba=4 riichi=2
@@ -431,12 +457,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8330.8564
-Model RMSE            : 91.2735
-Model MAE (diagnostic): 69.6492
+Model MSE             : 8018.9883
+Model RMSE            : 89.5488
+Model MAE (diagnostic): 69.4080
 
 --- Correlation with true EV ---
-Model corr            : 0.4627
+Model corr            : 0.4942
 
 ------------------------------------------------------------------------
 Group: E1 honba=4 riichi=3
@@ -451,12 +477,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10650.8008
-Model RMSE            : 103.2027
-Model MAE (diagnostic): 82.3946
+Model MSE             : 9298.6621
+Model RMSE            : 96.4296
+Model MAE (diagnostic): 83.8386
 
 --- Correlation with true EV ---
-Model corr            : 0.1074
+Model corr            : 0.3372
 
 ------------------------------------------------------------------------
 Group: E1 honba=4 riichi=4
@@ -471,12 +497,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9490.3145
-Model RMSE            : 97.4182
-Model MAE (diagnostic): 76.9066
+Model MSE             : 10211.7715
+Model RMSE            : 101.0533
+Model MAE (diagnostic): 81.6609
 
 --- Correlation with true EV ---
-Model corr            : 0.3029
+Model corr            : 0.0759
 
 ------------------------------------------------------------------------
 Group: E1 honba=5 riichi=0
@@ -491,12 +517,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6187.9375
-Model RMSE            : 78.6634
-Model MAE (diagnostic): 63.4970
+Model MSE             : 6239.7974
+Model RMSE            : 78.9924
+Model MAE (diagnostic): 63.4757
 
 --- Correlation with true EV ---
-Model corr            : 0.6528
+Model corr            : 0.6498
 
 ------------------------------------------------------------------------
 Group: E1 honba=5 riichi=1
@@ -511,12 +537,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7964.1299
-Model RMSE            : 89.2420
-Model MAE (diagnostic): 67.5801
+Model MSE             : 8066.4834
+Model RMSE            : 89.8136
+Model MAE (diagnostic): 67.8755
 
 --- Correlation with true EV ---
-Model corr            : 0.5131
+Model corr            : 0.5104
 
 ------------------------------------------------------------------------
 Group: E1 honba=5 riichi=2
@@ -531,12 +557,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3862.0320
-Model RMSE            : 62.1452
-Model MAE (diagnostic): 49.5814
+Model MSE             : 3242.0688
+Model RMSE            : 56.9392
+Model MAE (diagnostic): 44.7977
 
 --- Correlation with true EV ---
-Model corr            : 0.7904
+Model corr            : 0.8278
 
 ------------------------------------------------------------------------
 Group: E1 honba=5 riichi=4
@@ -551,12 +577,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8354.5498
-Model RMSE            : 91.4032
-Model MAE (diagnostic): 71.0527
+Model MSE             : 15524.9883
+Model RMSE            : 124.5993
+Model MAE (diagnostic): 93.0375
 
 --- Correlation with true EV ---
-Model corr            : 0.4009
+Model corr            : -0.5717
 
 ------------------------------------------------------------------------
 Group: E2 honba=0 riichi=0
@@ -571,12 +597,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8390.0703
-Model RMSE            : 91.5973
-Model MAE (diagnostic): 74.7099
+Model MSE             : 8525.0508
+Model RMSE            : 92.3312
+Model MAE (diagnostic): 75.4276
 
 --- Correlation with true EV ---
-Model corr            : 0.3263
+Model corr            : 0.3064
 
 ------------------------------------------------------------------------
 Group: E2 honba=1 riichi=0
@@ -591,12 +617,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7630.9951
-Model RMSE            : 87.3556
-Model MAE (diagnostic): 70.8219
+Model MSE             : 7939.2544
+Model RMSE            : 89.1025
+Model MAE (diagnostic): 72.2130
 
 --- Correlation with true EV ---
-Model corr            : 0.4448
+Model corr            : 0.4108
 
 ------------------------------------------------------------------------
 Group: E2 honba=1 riichi=1
@@ -611,12 +637,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8731.4043
-Model RMSE            : 93.4420
-Model MAE (diagnostic): 76.1916
+Model MSE             : 8915.2871
+Model RMSE            : 94.4208
+Model MAE (diagnostic): 77.5450
 
 --- Correlation with true EV ---
-Model corr            : 0.2559
+Model corr            : 0.2289
 
 ------------------------------------------------------------------------
 Group: E2 honba=1 riichi=2
@@ -631,12 +657,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8525.2188
-Model RMSE            : 92.3321
-Model MAE (diagnostic): 75.1091
+Model MSE             : 8988.9092
+Model RMSE            : 94.8099
+Model MAE (diagnostic): 77.7799
 
 --- Correlation with true EV ---
-Model corr            : 0.2978
+Model corr            : 0.2233
 
 ------------------------------------------------------------------------
 Group: E2 honba=1 riichi=3
@@ -651,12 +677,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7807.0396
-Model RMSE            : 88.3575
-Model MAE (diagnostic): 71.8302
+Model MSE             : 7977.2993
+Model RMSE            : 89.3157
+Model MAE (diagnostic): 73.6229
 
 --- Correlation with true EV ---
-Model corr            : 0.4499
+Model corr            : 0.4166
 
 ------------------------------------------------------------------------
 Group: E2 honba=1 riichi=4
@@ -671,12 +697,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7118.5083
-Model RMSE            : 84.3713
-Model MAE (diagnostic): 67.3989
+Model MSE             : 7332.7300
+Model RMSE            : 85.6314
+Model MAE (diagnostic): 67.5590
 
 --- Correlation with true EV ---
-Model corr            : 0.3367
+Model corr            : 0.2912
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=0
@@ -691,12 +717,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7060.6348
-Model RMSE            : 84.0276
-Model MAE (diagnostic): 67.4801
+Model MSE             : 7360.3325
+Model RMSE            : 85.7924
+Model MAE (diagnostic): 68.6413
 
 --- Correlation with true EV ---
-Model corr            : 0.5235
+Model corr            : 0.4959
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=1
@@ -711,12 +737,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7909.2148
-Model RMSE            : 88.9338
-Model MAE (diagnostic): 72.5231
+Model MSE             : 8169.4502
+Model RMSE            : 90.3850
+Model MAE (diagnostic): 73.6591
 
 --- Correlation with true EV ---
-Model corr            : 0.4025
+Model corr            : 0.3703
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=2
@@ -731,12 +757,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8675.3867
-Model RMSE            : 93.1418
-Model MAE (diagnostic): 75.6331
+Model MSE             : 8980.9668
+Model RMSE            : 94.7680
+Model MAE (diagnostic): 77.6273
 
 --- Correlation with true EV ---
-Model corr            : 0.2768
+Model corr            : 0.2369
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=3
@@ -751,12 +777,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8863.5537
-Model RMSE            : 94.1464
-Model MAE (diagnostic): 76.9457
+Model MSE             : 8253.8643
+Model RMSE            : 90.8508
+Model MAE (diagnostic): 75.0438
 
 --- Correlation with true EV ---
-Model corr            : 0.2201
+Model corr            : 0.3383
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=4
@@ -771,12 +797,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9795.4727
-Model RMSE            : 98.9721
-Model MAE (diagnostic): 83.0868
+Model MSE             : 11349.4990
+Model RMSE            : 106.5340
+Model MAE (diagnostic): 90.0959
 
 --- Correlation with true EV ---
-Model corr            : 0.0644
+Model corr            : -0.2293
 
 ------------------------------------------------------------------------
 Group: E2 honba=2 riichi=5
@@ -791,12 +817,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10113.1426
-Model RMSE            : 100.5641
-Model MAE (diagnostic): 86.6963
+Model MSE             : 15843.4346
+Model RMSE            : 125.8707
+Model MAE (diagnostic): 103.7635
 
 --- Correlation with true EV ---
-Model corr            : -0.3235
+Model corr            : -0.4750
 
 ------------------------------------------------------------------------
 Group: E2 honba=3 riichi=0
@@ -811,12 +837,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6390.7139
-Model RMSE            : 79.9419
-Model MAE (diagnostic): 63.4935
+Model MSE             : 6651.1885
+Model RMSE            : 81.5548
+Model MAE (diagnostic): 64.1083
 
 --- Correlation with true EV ---
-Model corr            : 0.5942
+Model corr            : 0.5720
 
 ------------------------------------------------------------------------
 Group: E2 honba=3 riichi=1
@@ -831,12 +857,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7633.5913
-Model RMSE            : 87.3704
-Model MAE (diagnostic): 70.0220
+Model MSE             : 7907.3452
+Model RMSE            : 88.9233
+Model MAE (diagnostic): 71.1022
 
 --- Correlation with true EV ---
-Model corr            : 0.4720
+Model corr            : 0.4467
 
 ------------------------------------------------------------------------
 Group: E2 honba=3 riichi=2
@@ -851,12 +877,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7807.2905
-Model RMSE            : 88.3589
-Model MAE (diagnostic): 72.2835
+Model MSE             : 8071.6714
+Model RMSE            : 89.8425
+Model MAE (diagnostic): 73.5505
 
 --- Correlation with true EV ---
-Model corr            : 0.4045
+Model corr            : 0.3748
 
 ------------------------------------------------------------------------
 Group: E2 honba=3 riichi=3
@@ -871,12 +897,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8290.6807
-Model RMSE            : 91.0532
-Model MAE (diagnostic): 74.4619
+Model MSE             : 9243.9404
+Model RMSE            : 96.1454
+Model MAE (diagnostic): 78.6895
 
 --- Correlation with true EV ---
-Model corr            : 0.2961
+Model corr            : 0.1587
 
 ------------------------------------------------------------------------
 Group: E2 honba=3 riichi=4
@@ -891,12 +917,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6989.7202
-Model RMSE            : 83.6045
-Model MAE (diagnostic): 68.6615
+Model MSE             : 7565.8096
+Model RMSE            : 86.9817
+Model MAE (diagnostic): 72.2564
 
 --- Correlation with true EV ---
-Model corr            : 0.6448
+Model corr            : 0.4844
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=0
@@ -911,12 +937,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6085.2393
-Model RMSE            : 78.0079
-Model MAE (diagnostic): 60.9174
+Model MSE             : 6336.4932
+Model RMSE            : 79.6021
+Model MAE (diagnostic): 61.4919
 
 --- Correlation with true EV ---
-Model corr            : 0.6284
+Model corr            : 0.6092
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=1
@@ -931,12 +957,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6629.3184
-Model RMSE            : 81.4206
-Model MAE (diagnostic): 63.6815
+Model MSE             : 7003.6821
+Model RMSE            : 83.6880
+Model MAE (diagnostic): 64.6455
 
 --- Correlation with true EV ---
-Model corr            : 0.6023
+Model corr            : 0.5718
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=2
@@ -951,12 +977,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5633.2100
-Model RMSE            : 75.0547
-Model MAE (diagnostic): 62.1336
+Model MSE             : 5973.3428
+Model RMSE            : 77.2874
+Model MAE (diagnostic): 63.3017
 
 --- Correlation with true EV ---
-Model corr            : 0.6646
+Model corr            : 0.6292
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=3
@@ -971,12 +997,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9702.6748
-Model RMSE            : 98.5022
-Model MAE (diagnostic): 86.0101
+Model MSE             : 9999.3428
+Model RMSE            : 99.9967
+Model MAE (diagnostic): 87.1405
 
 --- Correlation with true EV ---
-Model corr            : 0.0287
+Model corr            : 0.0205
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=4
@@ -991,12 +1017,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9357.0439
-Model RMSE            : 96.7318
-Model MAE (diagnostic): 80.2327
+Model MSE             : 12271.9629
+Model RMSE            : 110.7789
+Model MAE (diagnostic): 90.9013
 
 --- Correlation with true EV ---
-Model corr            : 0.1866
+Model corr            : -0.2656
 
 ------------------------------------------------------------------------
 Group: E2 honba=4 riichi=5
@@ -1011,12 +1037,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7057.2480
-Model RMSE            : 84.0074
-Model MAE (diagnostic): 76.4558
+Model MSE             : 8309.3955
+Model RMSE            : 91.1559
+Model MAE (diagnostic): 81.4137
 
 --- Correlation with true EV ---
-Model corr            : 0.7437
+Model corr            : 0.6048
 
 ------------------------------------------------------------------------
 Group: E2 honba=5 riichi=0
@@ -1031,12 +1057,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5442.5654
-Model RMSE            : 73.7737
-Model MAE (diagnostic): 57.1469
+Model MSE             : 5964.5562
+Model RMSE            : 77.2305
+Model MAE (diagnostic): 58.7989
 
 --- Correlation with true EV ---
-Model corr            : 0.6828
+Model corr            : 0.6473
 
 ------------------------------------------------------------------------
 Group: E2 honba=5 riichi=1
@@ -1051,12 +1077,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7826.1733
-Model RMSE            : 88.4657
-Model MAE (diagnostic): 70.2474
+Model MSE             : 7700.1274
+Model RMSE            : 87.7504
+Model MAE (diagnostic): 69.6524
 
 --- Correlation with true EV ---
-Model corr            : 0.5061
+Model corr            : 0.5174
 
 ------------------------------------------------------------------------
 Group: E2 honba=5 riichi=2
@@ -1071,12 +1097,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6559.1108
-Model RMSE            : 80.9883
-Model MAE (diagnostic): 65.2554
+Model MSE             : 6906.8652
+Model RMSE            : 83.1076
+Model MAE (diagnostic): 66.9735
 
 --- Correlation with true EV ---
-Model corr            : 0.6616
+Model corr            : 0.6328
 
 ------------------------------------------------------------------------
 Group: E2 honba=5 riichi=3
@@ -1091,12 +1117,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6278.8423
-Model RMSE            : 79.2391
-Model MAE (diagnostic): 67.3214
+Model MSE             : 6117.7812
+Model RMSE            : 78.2162
+Model MAE (diagnostic): 65.4681
 
 --- Correlation with true EV ---
-Model corr            : 0.6547
+Model corr            : 0.6694
 
 ------------------------------------------------------------------------
 Group: E2 honba=5 riichi=4
@@ -1111,12 +1137,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7065.6997
-Model RMSE            : 84.0577
-Model MAE (diagnostic): 73.1829
+Model MSE             : 6429.9619
+Model RMSE            : 80.1870
+Model MAE (diagnostic): 69.2915
 
 --- Correlation with true EV ---
-Model corr            : 0.5266
+Model corr            : 0.6031
 
 ------------------------------------------------------------------------
 Group: E3 honba=0 riichi=0
@@ -1131,12 +1157,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7427.0854
-Model RMSE            : 86.1805
-Model MAE (diagnostic): 69.8084
+Model MSE             : 7642.2812
+Model RMSE            : 87.4201
+Model MAE (diagnostic): 70.6310
 
 --- Correlation with true EV ---
-Model corr            : 0.4555
+Model corr            : 0.4319
 
 ------------------------------------------------------------------------
 Group: E3 honba=1 riichi=0
@@ -1151,12 +1177,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6968.1509
-Model RMSE            : 83.4755
-Model MAE (diagnostic): 67.2121
+Model MSE             : 7135.0283
+Model RMSE            : 84.4691
+Model MAE (diagnostic): 67.7544
 
 --- Correlation with true EV ---
-Model corr            : 0.5171
+Model corr            : 0.5014
 
 ------------------------------------------------------------------------
 Group: E3 honba=1 riichi=1
@@ -1171,12 +1197,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7709.0244
-Model RMSE            : 87.8011
-Model MAE (diagnostic): 71.3305
+Model MSE             : 7916.4561
+Model RMSE            : 88.9745
+Model MAE (diagnostic): 72.1075
 
 --- Correlation with true EV ---
-Model corr            : 0.4173
+Model corr            : 0.3930
 
 ------------------------------------------------------------------------
 Group: E3 honba=1 riichi=2
@@ -1191,12 +1217,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7725.0264
-Model RMSE            : 87.8921
-Model MAE (diagnostic): 71.7502
+Model MSE             : 7811.2515
+Model RMSE            : 88.3813
+Model MAE (diagnostic): 72.3155
 
 --- Correlation with true EV ---
-Model corr            : 0.4244
+Model corr            : 0.4131
 
 ------------------------------------------------------------------------
 Group: E3 honba=1 riichi=3
@@ -1206,17 +1232,17 @@ Seat-samples in group    : 32
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 8
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : -0.0000 (should be ~0)
+Avg sum(model EVs)    : 0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7989.5552
-Model RMSE            : 89.3843
-Model MAE (diagnostic): 72.8612
+Model MSE             : 7681.4863
+Model RMSE            : 87.6441
+Model MAE (diagnostic): 70.7438
 
 --- Correlation with true EV ---
-Model corr            : 0.4595
+Model corr            : 0.4767
 
 ------------------------------------------------------------------------
 Group: E3 honba=1 riichi=4
@@ -1231,12 +1257,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6474.5928
-Model RMSE            : 80.4649
-Model MAE (diagnostic): 69.8604
+Model MSE             : 8321.9590
+Model RMSE            : 91.2248
+Model MAE (diagnostic): 76.4801
 
 --- Correlation with true EV ---
-Model corr            : 0.6026
+Model corr            : 0.2417
 
 ------------------------------------------------------------------------
 Group: E3 honba=2 riichi=0
@@ -1251,12 +1277,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6397.2178
-Model RMSE            : 79.9826
-Model MAE (diagnostic): 63.7580
+Model MSE             : 6651.7124
+Model RMSE            : 81.5580
+Model MAE (diagnostic): 64.5446
 
 --- Correlation with true EV ---
-Model corr            : 0.5825
+Model corr            : 0.5609
 
 ------------------------------------------------------------------------
 Group: E3 honba=2 riichi=1
@@ -1271,12 +1297,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7544.8237
-Model RMSE            : 86.8609
-Model MAE (diagnostic): 70.3206
+Model MSE             : 7824.3770
+Model RMSE            : 88.4555
+Model MAE (diagnostic): 71.4490
 
 --- Correlation with true EV ---
-Model corr            : 0.4465
+Model corr            : 0.4183
 
 ------------------------------------------------------------------------
 Group: E3 honba=2 riichi=2
@@ -1291,12 +1317,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7305.5156
-Model RMSE            : 85.4723
-Model MAE (diagnostic): 69.6184
+Model MSE             : 7622.7051
+Model RMSE            : 87.3081
+Model MAE (diagnostic): 71.1388
 
 --- Correlation with true EV ---
-Model corr            : 0.4792
+Model corr            : 0.4377
 
 ------------------------------------------------------------------------
 Group: E3 honba=2 riichi=3
@@ -1311,12 +1337,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7664.6221
-Model RMSE            : 87.5478
-Model MAE (diagnostic): 70.8925
+Model MSE             : 7554.1396
+Model RMSE            : 86.9146
+Model MAE (diagnostic): 69.7784
 
 --- Correlation with true EV ---
-Model corr            : 0.4003
+Model corr            : 0.4117
 
 ------------------------------------------------------------------------
 Group: E3 honba=2 riichi=4
@@ -1331,12 +1357,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5497.3867
-Model RMSE            : 74.1444
-Model MAE (diagnostic): 55.1927
+Model MSE             : 6129.1025
+Model RMSE            : 78.2886
+Model MAE (diagnostic): 59.1234
 
 --- Correlation with true EV ---
-Model corr            : 0.6926
+Model corr            : 0.6432
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=0
@@ -1351,12 +1377,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5515.3789
-Model RMSE            : 74.2656
-Model MAE (diagnostic): 58.5296
+Model MSE             : 5573.5718
+Model RMSE            : 74.6564
+Model MAE (diagnostic): 58.4835
 
 --- Correlation with true EV ---
-Model corr            : 0.6650
+Model corr            : 0.6601
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=1
@@ -1371,12 +1397,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7226.3315
-Model RMSE            : 85.0078
-Model MAE (diagnostic): 68.9510
+Model MSE             : 7232.5112
+Model RMSE            : 85.0442
+Model MAE (diagnostic): 69.1683
 
 --- Correlation with true EV ---
-Model corr            : 0.4985
+Model corr            : 0.4987
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=2
@@ -1391,12 +1417,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7141.5850
-Model RMSE            : 84.5079
-Model MAE (diagnostic): 69.9704
+Model MSE             : 7105.6885
+Model RMSE            : 84.2952
+Model MAE (diagnostic): 69.6772
 
 --- Correlation with true EV ---
-Model corr            : 0.5093
+Model corr            : 0.5110
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=3
@@ -1411,12 +1437,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8100.2334
-Model RMSE            : 90.0013
-Model MAE (diagnostic): 72.8138
+Model MSE             : 8132.3462
+Model RMSE            : 90.1795
+Model MAE (diagnostic): 73.0328
 
 --- Correlation with true EV ---
-Model corr            : 0.3462
+Model corr            : 0.3513
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=4
@@ -1431,12 +1457,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8386.4727
-Model RMSE            : 91.5777
-Model MAE (diagnostic): 77.8852
+Model MSE             : 7253.3018
+Model RMSE            : 85.1663
+Model MAE (diagnostic): 71.4154
 
 --- Correlation with true EV ---
-Model corr            : 0.9276
+Model corr            : 0.9807
 
 ------------------------------------------------------------------------
 Group: E3 honba=3 riichi=5
@@ -1451,12 +1477,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7798.3750
-Model RMSE            : 88.3084
-Model MAE (diagnostic): 70.9417
+Model MSE             : 12280.9404
+Model RMSE            : 110.8194
+Model MAE (diagnostic): 91.8795
 
 --- Correlation with true EV ---
-Model corr            : 0.6471
+Model corr            : -0.7995
 
 ------------------------------------------------------------------------
 Group: E3 honba=4 riichi=0
@@ -1471,12 +1497,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5421.5513
-Model RMSE            : 73.6312
-Model MAE (diagnostic): 57.9424
+Model MSE             : 5570.2617
+Model RMSE            : 74.6342
+Model MAE (diagnostic): 58.2373
 
 --- Correlation with true EV ---
-Model corr            : 0.6747
+Model corr            : 0.6635
 
 ------------------------------------------------------------------------
 Group: E3 honba=4 riichi=1
@@ -1491,12 +1517,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7135.5586
-Model RMSE            : 84.4722
-Model MAE (diagnostic): 66.1512
+Model MSE             : 7549.5918
+Model RMSE            : 86.8884
+Model MAE (diagnostic): 67.8345
 
 --- Correlation with true EV ---
-Model corr            : 0.5456
+Model corr            : 0.5115
 
 ------------------------------------------------------------------------
 Group: E3 honba=4 riichi=2
@@ -1506,17 +1532,17 @@ Seat-samples in group    : 76
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 19
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : -0.0000 (should be ~0)
+Avg sum(model EVs)    : 0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6177.8599
-Model RMSE            : 78.5994
-Model MAE (diagnostic): 64.1361
+Model MSE             : 6509.9585
+Model RMSE            : 80.6843
+Model MAE (diagnostic): 67.1697
 
 --- Correlation with true EV ---
-Model corr            : 0.5859
+Model corr            : 0.5545
 
 ------------------------------------------------------------------------
 Group: E3 honba=4 riichi=3
@@ -1531,12 +1557,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6677.7080
-Model RMSE            : 81.7172
-Model MAE (diagnostic): 70.7230
+Model MSE             : 7542.1875
+Model RMSE            : 86.8458
+Model MAE (diagnostic): 74.8542
 
 --- Correlation with true EV ---
-Model corr            : 0.5857
+Model corr            : 0.4847
 
 ------------------------------------------------------------------------
 Group: E3 honba=4 riichi=5
@@ -1551,12 +1577,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7459.8335
-Model RMSE            : 86.3703
-Model MAE (diagnostic): 70.6145
+Model MSE             : 9353.9600
+Model RMSE            : 96.7159
+Model MAE (diagnostic): 81.2965
 
 --- Correlation with true EV ---
-Model corr            : 0.7003
+Model corr            : 0.1705
 
 ------------------------------------------------------------------------
 Group: E3 honba=5 riichi=0
@@ -1571,12 +1597,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4945.9448
-Model RMSE            : 70.3274
-Model MAE (diagnostic): 54.7229
+Model MSE             : 5171.1763
+Model RMSE            : 71.9109
+Model MAE (diagnostic): 55.5541
 
 --- Correlation with true EV ---
-Model corr            : 0.7196
+Model corr            : 0.7030
 
 ------------------------------------------------------------------------
 Group: E3 honba=5 riichi=1
@@ -1591,12 +1617,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5007.2681
-Model RMSE            : 70.7621
-Model MAE (diagnostic): 52.1934
+Model MSE             : 5701.0889
+Model RMSE            : 75.5056
+Model MAE (diagnostic): 53.0236
 
 --- Correlation with true EV ---
-Model corr            : 0.7083
+Model corr            : 0.6579
 
 ------------------------------------------------------------------------
 Group: E3 honba=5 riichi=2
@@ -1611,12 +1637,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5597.7661
-Model RMSE            : 74.8182
-Model MAE (diagnostic): 59.1600
+Model MSE             : 5616.0332
+Model RMSE            : 74.9402
+Model MAE (diagnostic): 59.1448
 
 --- Correlation with true EV ---
-Model corr            : 0.6883
+Model corr            : 0.6791
 
 ------------------------------------------------------------------------
 Group: E3 honba=5 riichi=3
@@ -1631,12 +1657,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7568.7500
-Model RMSE            : 86.9986
-Model MAE (diagnostic): 72.2488
+Model MSE             : 9344.0693
+Model RMSE            : 96.6647
+Model MAE (diagnostic): 81.9885
 
 --- Correlation with true EV ---
-Model corr            : 0.5833
+Model corr            : 0.4046
 
 ------------------------------------------------------------------------
 Group: E3 honba=5 riichi=5
@@ -1651,12 +1677,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7027.5342
-Model RMSE            : 83.8304
-Model MAE (diagnostic): 72.2431
+Model MSE             : 6581.4028
+Model RMSE            : 81.1258
+Model MAE (diagnostic): 69.5685
 
 --- Correlation with true EV ---
-Model corr            : 0.5928
+Model corr            : 0.6266
 
 ------------------------------------------------------------------------
 Group: E4 honba=0 riichi=0
@@ -1671,12 +1697,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6537.6040
-Model RMSE            : 80.8555
-Model MAE (diagnostic): 64.6382
+Model MSE             : 6683.2002
+Model RMSE            : 81.7508
+Model MAE (diagnostic): 65.0933
 
 --- Correlation with true EV ---
-Model corr            : 0.5479
+Model corr            : 0.5341
 
 ------------------------------------------------------------------------
 Group: E4 honba=1 riichi=0
@@ -1691,12 +1717,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6009.8809
-Model RMSE            : 77.5234
-Model MAE (diagnostic): 61.3462
+Model MSE             : 6078.5137
+Model RMSE            : 77.9648
+Model MAE (diagnostic): 61.3817
 
 --- Correlation with true EV ---
-Model corr            : 0.6044
+Model corr            : 0.5985
 
 ------------------------------------------------------------------------
 Group: E4 honba=1 riichi=1
@@ -1711,12 +1737,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6705.8799
-Model RMSE            : 81.8894
-Model MAE (diagnostic): 66.0881
+Model MSE             : 6873.4292
+Model RMSE            : 82.9061
+Model MAE (diagnostic): 66.6939
 
 --- Correlation with true EV ---
-Model corr            : 0.5267
+Model corr            : 0.5087
 
 ------------------------------------------------------------------------
 Group: E4 honba=1 riichi=2
@@ -1731,12 +1757,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6713.7285
-Model RMSE            : 81.9373
-Model MAE (diagnostic): 65.6248
+Model MSE             : 7005.0728
+Model RMSE            : 83.6963
+Model MAE (diagnostic): 66.6249
 
 --- Correlation with true EV ---
-Model corr            : 0.5286
+Model corr            : 0.4987
 
 ------------------------------------------------------------------------
 Group: E4 honba=1 riichi=3
@@ -1751,12 +1777,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 11627.4375
-Model RMSE            : 107.8306
-Model MAE (diagnostic): 87.0275
+Model MSE             : 11301.7256
+Model RMSE            : 106.3096
+Model MAE (diagnostic): 86.2201
 
 --- Correlation with true EV ---
-Model corr            : 0.0964
+Model corr            : 0.1455
 
 ------------------------------------------------------------------------
 Group: E4 honba=1 riichi=4
@@ -1771,12 +1797,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7765.6294
-Model RMSE            : 88.1228
-Model MAE (diagnostic): 70.3114
+Model MSE             : 6933.2002
+Model RMSE            : 83.2658
+Model MAE (diagnostic): 66.9945
 
 --- Correlation with true EV ---
-Model corr            : 0.3352
+Model corr            : 0.5067
 
 ------------------------------------------------------------------------
 Group: E4 honba=2 riichi=0
@@ -1791,12 +1817,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5509.6055
-Model RMSE            : 74.2267
-Model MAE (diagnostic): 58.1550
+Model MSE             : 5611.8491
+Model RMSE            : 74.9123
+Model MAE (diagnostic): 58.2060
 
 --- Correlation with true EV ---
-Model corr            : 0.6544
+Model corr            : 0.6463
 
 ------------------------------------------------------------------------
 Group: E4 honba=2 riichi=1
@@ -1811,12 +1837,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6457.9819
-Model RMSE            : 80.3616
-Model MAE (diagnostic): 64.4540
+Model MSE             : 6632.7793
+Model RMSE            : 81.4419
+Model MAE (diagnostic): 65.0420
 
 --- Correlation with true EV ---
-Model corr            : 0.5599
+Model corr            : 0.5437
 
 ------------------------------------------------------------------------
 Group: E4 honba=2 riichi=2
@@ -1831,12 +1857,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7185.7280
-Model RMSE            : 84.7687
-Model MAE (diagnostic): 69.3714
+Model MSE             : 7301.9458
+Model RMSE            : 85.4514
+Model MAE (diagnostic): 69.6516
 
 --- Correlation with true EV ---
-Model corr            : 0.4848
+Model corr            : 0.4725
 
 ------------------------------------------------------------------------
 Group: E4 honba=2 riichi=3
@@ -1851,12 +1877,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7392.0444
-Model RMSE            : 85.9770
-Model MAE (diagnostic): 70.3516
+Model MSE             : 8432.6816
+Model RMSE            : 91.8296
+Model MAE (diagnostic): 74.3653
 
 --- Correlation with true EV ---
-Model corr            : 0.4351
+Model corr            : 0.3030
 
 ------------------------------------------------------------------------
 Group: E4 honba=2 riichi=4
@@ -1871,12 +1897,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3781.6836
-Model RMSE            : 61.4954
-Model MAE (diagnostic): 50.5702
+Model MSE             : 3540.7031
+Model RMSE            : 59.5038
+Model MAE (diagnostic): 49.5007
 
 --- Correlation with true EV ---
-Model corr            : 0.8345
+Model corr            : 0.8448
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=0
@@ -1891,12 +1917,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4898.9326
-Model RMSE            : 69.9924
-Model MAE (diagnostic): 54.3406
+Model MSE             : 5166.9380
+Model RMSE            : 71.8814
+Model MAE (diagnostic): 55.3062
 
 --- Correlation with true EV ---
-Model corr            : 0.7077
+Model corr            : 0.6873
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=1
@@ -1911,12 +1937,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6300.9614
-Model RMSE            : 79.3786
-Model MAE (diagnostic): 62.5516
+Model MSE             : 6472.0400
+Model RMSE            : 80.4490
+Model MAE (diagnostic): 63.0629
 
 --- Correlation with true EV ---
-Model corr            : 0.5765
+Model corr            : 0.5612
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=2
@@ -1931,12 +1957,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5675.1851
-Model RMSE            : 75.3338
-Model MAE (diagnostic): 59.0059
+Model MSE             : 5696.1001
+Model RMSE            : 75.4725
+Model MAE (diagnostic): 58.8122
 
 --- Correlation with true EV ---
-Model corr            : 0.6353
+Model corr            : 0.6332
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=3
@@ -1951,12 +1977,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7562.4932
-Model RMSE            : 86.9626
-Model MAE (diagnostic): 69.2421
+Model MSE             : 7694.1978
+Model RMSE            : 87.7166
+Model MAE (diagnostic): 69.6153
 
 --- Correlation with true EV ---
-Model corr            : 0.4442
+Model corr            : 0.4333
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=4
@@ -1971,12 +1997,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6228.4468
-Model RMSE            : 78.9205
-Model MAE (diagnostic): 63.1479
+Model MSE             : 5982.6484
+Model RMSE            : 77.3476
+Model MAE (diagnostic): 61.0007
 
 --- Correlation with true EV ---
-Model corr            : 0.5324
+Model corr            : 0.5558
 
 ------------------------------------------------------------------------
 Group: E4 honba=3 riichi=5
@@ -1986,17 +2012,17 @@ Seat-samples in group    : 8
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 2
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : -0.0000 (should be ~0)
+Avg sum(model EVs)    : 0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2700.2905
-Model RMSE            : 51.9643
-Model MAE (diagnostic): 42.4440
+Model MSE             : 4490.7515
+Model RMSE            : 67.0131
+Model MAE (diagnostic): 58.7210
 
 --- Correlation with true EV ---
-Model corr            : 0.8675
+Model corr            : 0.7383
 
 ------------------------------------------------------------------------
 Group: E4 honba=4 riichi=0
@@ -2011,12 +2037,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4915.7300
-Model RMSE            : 70.1123
-Model MAE (diagnostic): 53.6564
+Model MSE             : 5204.0898
+Model RMSE            : 72.1394
+Model MAE (diagnostic): 54.6209
 
 --- Correlation with true EV ---
-Model corr            : 0.7116
+Model corr            : 0.6914
 
 ------------------------------------------------------------------------
 Group: E4 honba=4 riichi=1
@@ -2031,12 +2057,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5288.9634
-Model RMSE            : 72.7253
-Model MAE (diagnostic): 57.7192
+Model MSE             : 5556.9390
+Model RMSE            : 74.5449
+Model MAE (diagnostic): 58.4484
 
 --- Correlation with true EV ---
-Model corr            : 0.6640
+Model corr            : 0.6426
 
 ------------------------------------------------------------------------
 Group: E4 honba=4 riichi=2
@@ -2051,12 +2077,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5328.2075
-Model RMSE            : 72.9946
-Model MAE (diagnostic): 59.5186
+Model MSE             : 6250.4111
+Model RMSE            : 79.0595
+Model MAE (diagnostic): 62.4980
 
 --- Correlation with true EV ---
-Model corr            : 0.6867
+Model corr            : 0.5971
 
 ------------------------------------------------------------------------
 Group: E4 honba=4 riichi=3
@@ -2071,12 +2097,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4698.1553
-Model RMSE            : 68.5431
-Model MAE (diagnostic): 55.0718
+Model MSE             : 5156.5947
+Model RMSE            : 71.8094
+Model MAE (diagnostic): 57.7275
 
 --- Correlation with true EV ---
-Model corr            : 0.7130
+Model corr            : 0.6727
 
 ------------------------------------------------------------------------
 Group: E4 honba=4 riichi=5
@@ -2091,12 +2117,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4951.9707
-Model RMSE            : 70.3702
-Model MAE (diagnostic): 58.0069
+Model MSE             : 5673.6396
+Model RMSE            : 75.3236
+Model MAE (diagnostic): 61.3821
 
 --- Correlation with true EV ---
-Model corr            : 0.6272
+Model corr            : 0.5298
 
 ------------------------------------------------------------------------
 Group: E4 honba=5 riichi=0
@@ -2111,12 +2137,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4304.5713
-Model RMSE            : 65.6092
-Model MAE (diagnostic): 49.3649
+Model MSE             : 4320.9800
+Model RMSE            : 65.7342
+Model MAE (diagnostic): 49.2315
 
 --- Correlation with true EV ---
-Model corr            : 0.7628
+Model corr            : 0.7610
 
 ------------------------------------------------------------------------
 Group: E4 honba=5 riichi=1
@@ -2131,12 +2157,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4974.4648
-Model RMSE            : 70.5299
-Model MAE (diagnostic): 55.0508
+Model MSE             : 5079.7910
+Model RMSE            : 71.2727
+Model MAE (diagnostic): 54.9648
 
 --- Correlation with true EV ---
-Model corr            : 0.6978
+Model corr            : 0.6895
 
 ------------------------------------------------------------------------
 Group: E4 honba=5 riichi=2
@@ -2151,12 +2177,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4341.2910
-Model RMSE            : 65.8885
-Model MAE (diagnostic): 52.5193
+Model MSE             : 3764.0901
+Model RMSE            : 61.3522
+Model MAE (diagnostic): 48.1211
 
 --- Correlation with true EV ---
-Model corr            : 0.7539
+Model corr            : 0.7932
 
 ------------------------------------------------------------------------
 Group: E4 honba=5 riichi=3
@@ -2171,12 +2197,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6227.2490
-Model RMSE            : 78.9129
-Model MAE (diagnostic): 61.8631
+Model MSE             : 6228.1006
+Model RMSE            : 78.9183
+Model MAE (diagnostic): 60.6586
 
 --- Correlation with true EV ---
-Model corr            : 0.6689
+Model corr            : 0.6609
 
 ------------------------------------------------------------------------
 Group: E4 honba=5 riichi=4
@@ -2191,12 +2217,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4389.5024
-Model RMSE            : 66.2533
-Model MAE (diagnostic): 55.4531
+Model MSE             : 4108.4805
+Model RMSE            : 64.0974
+Model MAE (diagnostic): 53.1322
 
 --- Correlation with true EV ---
-Model corr            : 0.7631
+Model corr            : 0.7810
 
 ------------------------------------------------------------------------
 Group: S1 honba=0 riichi=0
@@ -2211,12 +2237,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5587.3379
-Model RMSE            : 74.7485
-Model MAE (diagnostic): 58.5121
+Model MSE             : 5733.7837
+Model RMSE            : 75.7218
+Model MAE (diagnostic): 58.8672
 
 --- Correlation with true EV ---
-Model corr            : 0.6317
+Model corr            : 0.6194
 
 ------------------------------------------------------------------------
 Group: S1 honba=1 riichi=0
@@ -2231,12 +2257,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5268.3843
-Model RMSE            : 72.5836
-Model MAE (diagnostic): 56.4711
+Model MSE             : 5372.2524
+Model RMSE            : 73.2957
+Model MAE (diagnostic): 56.6736
 
 --- Correlation with true EV ---
-Model corr            : 0.6631
+Model corr            : 0.6547
 
 ------------------------------------------------------------------------
 Group: S1 honba=1 riichi=1
@@ -2251,12 +2277,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6178.6323
-Model RMSE            : 78.6043
-Model MAE (diagnostic): 62.3474
+Model MSE             : 6344.8999
+Model RMSE            : 79.6549
+Model MAE (diagnostic): 62.7832
 
 --- Correlation with true EV ---
-Model corr            : 0.5737
+Model corr            : 0.5591
 
 ------------------------------------------------------------------------
 Group: S1 honba=1 riichi=2
@@ -2271,12 +2297,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6439.0991
-Model RMSE            : 80.2440
-Model MAE (diagnostic): 63.1840
+Model MSE             : 6603.8667
+Model RMSE            : 81.2642
+Model MAE (diagnostic): 63.6066
 
 --- Correlation with true EV ---
-Model corr            : 0.5517
+Model corr            : 0.5376
 
 ------------------------------------------------------------------------
 Group: S1 honba=1 riichi=3
@@ -2291,12 +2317,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8996.3428
-Model RMSE            : 94.8491
-Model MAE (diagnostic): 77.8141
+Model MSE             : 9226.2139
+Model RMSE            : 96.0532
+Model MAE (diagnostic): 78.5890
 
 --- Correlation with true EV ---
-Model corr            : 0.1899
+Model corr            : 0.1736
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=0
@@ -2311,12 +2337,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5121.1943
-Model RMSE            : 71.5625
-Model MAE (diagnostic): 55.5483
+Model MSE             : 5245.5063
+Model RMSE            : 72.4259
+Model MAE (diagnostic): 55.7369
 
 --- Correlation with true EV ---
-Model corr            : 0.6791
+Model corr            : 0.6697
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=1
@@ -2331,12 +2357,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5773.1880
-Model RMSE            : 75.9815
-Model MAE (diagnostic): 60.0352
+Model MSE             : 5971.7129
+Model RMSE            : 77.2769
+Model MAE (diagnostic): 60.8170
 
 --- Correlation with true EV ---
-Model corr            : 0.6165
+Model corr            : 0.5994
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=2
@@ -2351,12 +2377,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5473.2290
-Model RMSE            : 73.9813
-Model MAE (diagnostic): 58.7585
+Model MSE             : 5604.9160
+Model RMSE            : 74.8660
+Model MAE (diagnostic): 59.1399
 
 --- Correlation with true EV ---
-Model corr            : 0.6480
+Model corr            : 0.6351
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=3
@@ -2371,12 +2397,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6056.5352
-Model RMSE            : 77.8237
-Model MAE (diagnostic): 62.1931
+Model MSE             : 6961.7876
+Model RMSE            : 83.4373
+Model MAE (diagnostic): 65.5156
 
 --- Correlation with true EV ---
-Model corr            : 0.5922
+Model corr            : 0.5042
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=4
@@ -2391,12 +2417,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7725.3945
-Model RMSE            : 87.8942
-Model MAE (diagnostic): 79.2494
+Model MSE             : 7413.8564
+Model RMSE            : 86.1038
+Model MAE (diagnostic): 77.0032
 
 --- Correlation with true EV ---
-Model corr            : 0.4084
+Model corr            : 0.4483
 
 ------------------------------------------------------------------------
 Group: S1 honba=2 riichi=5
@@ -2411,12 +2437,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4423.7031
-Model RMSE            : 66.5109
-Model MAE (diagnostic): 57.5141
+Model MSE             : 5601.2715
+Model RMSE            : 74.8416
+Model MAE (diagnostic): 65.6279
 
 --- Correlation with true EV ---
-Model corr            : 0.7268
+Model corr            : 0.6151
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=0
@@ -2431,12 +2457,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4871.8828
-Model RMSE            : 69.7989
-Model MAE (diagnostic): 53.7460
+Model MSE             : 5012.1055
+Model RMSE            : 70.7962
+Model MAE (diagnostic): 54.0628
 
 --- Correlation with true EV ---
-Model corr            : 0.7054
+Model corr            : 0.6952
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=1
@@ -2451,12 +2477,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5435.1846
-Model RMSE            : 73.7237
-Model MAE (diagnostic): 57.2983
+Model MSE             : 5341.9585
+Model RMSE            : 73.0887
+Model MAE (diagnostic): 56.3034
 
 --- Correlation with true EV ---
-Model corr            : 0.6527
+Model corr            : 0.6602
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=2
@@ -2471,12 +2497,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5475.6011
-Model RMSE            : 73.9973
-Model MAE (diagnostic): 59.1171
+Model MSE             : 5443.3970
+Model RMSE            : 73.7794
+Model MAE (diagnostic): 58.2798
 
 --- Correlation with true EV ---
-Model corr            : 0.6478
+Model corr            : 0.6495
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=3
@@ -2491,12 +2517,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5078.0186
-Model RMSE            : 71.2602
-Model MAE (diagnostic): 58.8896
+Model MSE             : 4897.6685
+Model RMSE            : 69.9833
+Model MAE (diagnostic): 56.8674
 
 --- Correlation with true EV ---
-Model corr            : 0.6913
+Model corr            : 0.7006
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=4
@@ -2511,12 +2537,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 9293.6553
-Model RMSE            : 96.4036
-Model MAE (diagnostic): 74.9968
+Model MSE             : 10436.7285
+Model RMSE            : 102.1603
+Model MAE (diagnostic): 79.7105
 
 --- Correlation with true EV ---
-Model corr            : 0.1201
+Model corr            : -0.0428
 
 ------------------------------------------------------------------------
 Group: S1 honba=3 riichi=5
@@ -2531,12 +2557,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5149.7480
-Model RMSE            : 71.7617
-Model MAE (diagnostic): 63.7523
+Model MSE             : 4303.7339
+Model RMSE            : 65.6028
+Model MAE (diagnostic): 59.5802
 
 --- Correlation with true EV ---
-Model corr            : 0.6380
+Model corr            : 0.7227
 
 ------------------------------------------------------------------------
 Group: S1 honba=4 riichi=0
@@ -2551,12 +2577,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5304.6548
-Model RMSE            : 72.8331
-Model MAE (diagnostic): 55.4351
+Model MSE             : 5526.0723
+Model RMSE            : 74.3376
+Model MAE (diagnostic): 55.9410
 
 --- Correlation with true EV ---
-Model corr            : 0.6776
+Model corr            : 0.6627
 
 ------------------------------------------------------------------------
 Group: S1 honba=4 riichi=1
@@ -2571,12 +2597,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5159.1709
-Model RMSE            : 71.8274
-Model MAE (diagnostic): 54.9409
+Model MSE             : 5446.2227
+Model RMSE            : 73.7985
+Model MAE (diagnostic): 55.8616
 
 --- Correlation with true EV ---
-Model corr            : 0.6703
+Model corr            : 0.6485
 
 ------------------------------------------------------------------------
 Group: S1 honba=4 riichi=2
@@ -2591,12 +2617,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6499.7539
-Model RMSE            : 80.6211
-Model MAE (diagnostic): 62.8275
+Model MSE             : 6622.8369
+Model RMSE            : 81.3808
+Model MAE (diagnostic): 63.1619
 
 --- Correlation with true EV ---
-Model corr            : 0.5550
+Model corr            : 0.5456
 
 ------------------------------------------------------------------------
 Group: S1 honba=4 riichi=3
@@ -2611,12 +2637,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5636.5854
-Model RMSE            : 75.0772
-Model MAE (diagnostic): 57.9220
+Model MSE             : 5727.3716
+Model RMSE            : 75.6794
+Model MAE (diagnostic): 59.1440
 
 --- Correlation with true EV ---
-Model corr            : 0.6216
+Model corr            : 0.6143
 
 ------------------------------------------------------------------------
 Group: S1 honba=4 riichi=4
@@ -2631,12 +2657,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5885.6309
-Model RMSE            : 76.7179
-Model MAE (diagnostic): 61.6125
+Model MSE             : 5942.0356
+Model RMSE            : 77.0846
+Model MAE (diagnostic): 62.3996
 
 --- Correlation with true EV ---
-Model corr            : 0.6801
+Model corr            : 0.6825
 
 ------------------------------------------------------------------------
 Group: S1 honba=5 riichi=0
@@ -2651,12 +2677,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4328.0405
-Model RMSE            : 65.7878
-Model MAE (diagnostic): 50.0817
+Model MSE             : 4362.3252
+Model RMSE            : 66.0479
+Model MAE (diagnostic): 49.6811
 
 --- Correlation with true EV ---
-Model corr            : 0.7504
+Model corr            : 0.7480
 
 ------------------------------------------------------------------------
 Group: S1 honba=5 riichi=1
@@ -2671,12 +2697,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2602.9133
-Model RMSE            : 51.0188
-Model MAE (diagnostic): 40.3195
+Model MSE             : 3025.9446
+Model RMSE            : 55.0086
+Model MAE (diagnostic): 42.2759
 
 --- Correlation with true EV ---
-Model corr            : 0.8763
+Model corr            : 0.8458
 
 ------------------------------------------------------------------------
 Group: S1 honba=5 riichi=2
@@ -2691,12 +2717,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5405.8447
-Model RMSE            : 73.5244
-Model MAE (diagnostic): 56.3768
+Model MSE             : 5733.7773
+Model RMSE            : 75.7217
+Model MAE (diagnostic): 58.1492
 
 --- Correlation with true EV ---
-Model corr            : 0.6658
+Model corr            : 0.6411
 
 ------------------------------------------------------------------------
 Group: S1 honba=5 riichi=3
@@ -2711,12 +2737,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 1658.2263
-Model RMSE            : 40.7213
-Model MAE (diagnostic): 35.2807
+Model MSE             : 1861.9733
+Model RMSE            : 43.1506
+Model MAE (diagnostic): 38.9656
 
 --- Correlation with true EV ---
-Model corr            : 0.9650
+Model corr            : 0.9508
 
 ------------------------------------------------------------------------
 Group: S1 honba=5 riichi=4
@@ -2731,12 +2757,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 7074.0703
-Model RMSE            : 84.1075
-Model MAE (diagnostic): 73.5516
+Model MSE             : 15924.8447
+Model RMSE            : 126.1937
+Model MAE (diagnostic): 109.7202
 
 --- Correlation with true EV ---
-Model corr            : 0.5504
+Model corr            : -0.0041
 
 ------------------------------------------------------------------------
 Group: S2 honba=0 riichi=0
@@ -2751,12 +2777,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4658.4268
-Model RMSE            : 68.2527
-Model MAE (diagnostic): 52.0696
+Model MSE             : 4792.8867
+Model RMSE            : 69.2307
+Model MAE (diagnostic): 52.4152
 
 --- Correlation with true EV ---
-Model corr            : 0.7037
+Model corr            : 0.6935
 
 ------------------------------------------------------------------------
 Group: S2 honba=1 riichi=0
@@ -2771,12 +2797,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4452.4551
-Model RMSE            : 66.7267
-Model MAE (diagnostic): 50.3409
+Model MSE             : 4586.1733
+Model RMSE            : 67.7213
+Model MAE (diagnostic): 50.6390
 
 --- Correlation with true EV ---
-Model corr            : 0.7233
+Model corr            : 0.7136
 
 ------------------------------------------------------------------------
 Group: S2 honba=1 riichi=1
@@ -2791,12 +2817,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5114.8745
-Model RMSE            : 71.5184
-Model MAE (diagnostic): 55.0325
+Model MSE             : 5256.7949
+Model RMSE            : 72.5038
+Model MAE (diagnostic): 55.2670
 
 --- Correlation with true EV ---
-Model corr            : 0.6654
+Model corr            : 0.6539
 
 ------------------------------------------------------------------------
 Group: S2 honba=1 riichi=2
@@ -2811,12 +2837,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4361.2339
-Model RMSE            : 66.0396
-Model MAE (diagnostic): 51.1239
+Model MSE             : 4392.6997
+Model RMSE            : 66.2774
+Model MAE (diagnostic): 50.7982
 
 --- Correlation with true EV ---
-Model corr            : 0.7263
+Model corr            : 0.7232
 
 ------------------------------------------------------------------------
 Group: S2 honba=1 riichi=4
@@ -2831,12 +2857,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2781.2803
-Model RMSE            : 52.7378
-Model MAE (diagnostic): 49.8076
+Model MSE             : 3193.0112
+Model RMSE            : 56.5067
+Model MAE (diagnostic): 52.0420
 
 --- Correlation with true EV ---
-Model corr            : 0.9056
+Model corr            : 0.8428
 
 ------------------------------------------------------------------------
 Group: S2 honba=2 riichi=0
@@ -2851,12 +2877,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4221.8604
-Model RMSE            : 64.9758
-Model MAE (diagnostic): 48.6927
+Model MSE             : 4356.8311
+Model RMSE            : 66.0063
+Model MAE (diagnostic): 49.0429
 
 --- Correlation with true EV ---
-Model corr            : 0.7446
+Model corr            : 0.7350
 
 ------------------------------------------------------------------------
 Group: S2 honba=2 riichi=1
@@ -2871,12 +2897,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4963.7183
-Model RMSE            : 70.4537
-Model MAE (diagnostic): 54.3823
+Model MSE             : 5102.4648
+Model RMSE            : 71.4315
+Model MAE (diagnostic): 54.6060
 
 --- Correlation with true EV ---
-Model corr            : 0.6806
+Model corr            : 0.6698
 
 ------------------------------------------------------------------------
 Group: S2 honba=2 riichi=2
@@ -2891,12 +2917,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4896.3047
-Model RMSE            : 69.9736
-Model MAE (diagnostic): 54.1946
+Model MSE             : 4816.7695
+Model RMSE            : 69.4030
+Model MAE (diagnostic): 53.4252
 
 --- Correlation with true EV ---
-Model corr            : 0.6816
+Model corr            : 0.6877
 
 ------------------------------------------------------------------------
 Group: S2 honba=2 riichi=3
@@ -2911,12 +2937,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5021.1650
-Model RMSE            : 70.8602
-Model MAE (diagnostic): 54.2368
+Model MSE             : 5277.8936
+Model RMSE            : 72.6491
+Model MAE (diagnostic): 54.0149
 
 --- Correlation with true EV ---
-Model corr            : 0.6697
+Model corr            : 0.6484
 
 ------------------------------------------------------------------------
 Group: S2 honba=2 riichi=4
@@ -2931,12 +2957,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2331.4031
-Model RMSE            : 48.2846
-Model MAE (diagnostic): 39.1643
+Model MSE             : 3739.5476
+Model RMSE            : 61.1518
+Model MAE (diagnostic): 46.1360
 
 --- Correlation with true EV ---
-Model corr            : 0.9025
+Model corr            : 0.7991
 
 ------------------------------------------------------------------------
 Group: S2 honba=3 riichi=0
@@ -2946,17 +2972,17 @@ Seat-samples in group    : 1548
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 387
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4401.2373
-Model RMSE            : 66.3418
-Model MAE (diagnostic): 49.2833
+Model MSE             : 4610.5513
+Model RMSE            : 67.9010
+Model MAE (diagnostic): 49.9025
 
 --- Correlation with true EV ---
-Model corr            : 0.7373
+Model corr            : 0.7232
 
 ------------------------------------------------------------------------
 Group: S2 honba=3 riichi=1
@@ -2971,12 +2997,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4050.7715
-Model RMSE            : 63.6457
-Model MAE (diagnostic): 49.2245
+Model MSE             : 4316.3267
+Model RMSE            : 65.6988
+Model MAE (diagnostic): 49.9003
 
 --- Correlation with true EV ---
-Model corr            : 0.7552
+Model corr            : 0.7347
 
 ------------------------------------------------------------------------
 Group: S2 honba=3 riichi=2
@@ -2986,17 +3012,17 @@ Seat-samples in group    : 252
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 63
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5967.5220
-Model RMSE            : 77.2497
-Model MAE (diagnostic): 60.2242
+Model MSE             : 6449.4141
+Model RMSE            : 80.3082
+Model MAE (diagnostic): 61.6041
 
 --- Correlation with true EV ---
-Model corr            : 0.5992
+Model corr            : 0.5620
 
 ------------------------------------------------------------------------
 Group: S2 honba=3 riichi=3
@@ -3011,12 +3037,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5479.5781
-Model RMSE            : 74.0242
-Model MAE (diagnostic): 58.5363
+Model MSE             : 5575.3491
+Model RMSE            : 74.6683
+Model MAE (diagnostic): 59.0414
 
 --- Correlation with true EV ---
-Model corr            : 0.6136
+Model corr            : 0.6057
 
 ------------------------------------------------------------------------
 Group: S2 honba=3 riichi=4
@@ -3026,17 +3052,17 @@ Seat-samples in group    : 16
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 4
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3792.8535
-Model RMSE            : 61.5861
-Model MAE (diagnostic): 48.5378
+Model MSE             : 3846.6948
+Model RMSE            : 62.0217
+Model MAE (diagnostic): 47.2191
 
 --- Correlation with true EV ---
-Model corr            : 0.8190
+Model corr            : 0.8251
 
 ------------------------------------------------------------------------
 Group: S2 honba=4 riichi=0
@@ -3051,12 +3077,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3613.3669
-Model RMSE            : 60.1113
-Model MAE (diagnostic): 44.9709
+Model MSE             : 3804.3457
+Model RMSE            : 61.6794
+Model MAE (diagnostic): 45.7789
 
 --- Correlation with true EV ---
-Model corr            : 0.7993
+Model corr            : 0.7863
 
 ------------------------------------------------------------------------
 Group: S2 honba=4 riichi=1
@@ -3071,12 +3097,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5644.8789
-Model RMSE            : 75.1324
-Model MAE (diagnostic): 57.4555
+Model MSE             : 5674.6587
+Model RMSE            : 75.3303
+Model MAE (diagnostic): 57.2210
 
 --- Correlation with true EV ---
-Model corr            : 0.6488
+Model corr            : 0.6481
 
 ------------------------------------------------------------------------
 Group: S2 honba=4 riichi=2
@@ -3091,12 +3117,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5223.5791
-Model RMSE            : 72.2743
-Model MAE (diagnostic): 55.0468
+Model MSE             : 5133.6494
+Model RMSE            : 71.6495
+Model MAE (diagnostic): 54.9717
 
 --- Correlation with true EV ---
-Model corr            : 0.6658
+Model corr            : 0.6729
 
 ------------------------------------------------------------------------
 Group: S2 honba=4 riichi=3
@@ -3111,12 +3137,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5834.7466
-Model RMSE            : 76.3855
-Model MAE (diagnostic): 60.8547
+Model MSE             : 6082.4731
+Model RMSE            : 77.9902
+Model MAE (diagnostic): 61.7127
 
 --- Correlation with true EV ---
-Model corr            : 0.5987
+Model corr            : 0.5759
 
 ------------------------------------------------------------------------
 Group: S2 honba=4 riichi=4
@@ -3131,12 +3157,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 8171.3008
-Model RMSE            : 90.3952
-Model MAE (diagnostic): 76.4573
+Model MSE             : 10801.4346
+Model RMSE            : 103.9300
+Model MAE (diagnostic): 88.4674
 
 --- Correlation with true EV ---
-Model corr            : 0.2024
+Model corr            : -0.1494
 
 ------------------------------------------------------------------------
 Group: S2 honba=5 riichi=0
@@ -3151,12 +3177,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3668.0771
-Model RMSE            : 60.5647
-Model MAE (diagnostic): 44.8448
+Model MSE             : 3915.6868
+Model RMSE            : 62.5754
+Model MAE (diagnostic): 45.5824
 
 --- Correlation with true EV ---
-Model corr            : 0.7985
+Model corr            : 0.7815
 
 ------------------------------------------------------------------------
 Group: S2 honba=5 riichi=1
@@ -3171,12 +3197,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 5622.8105
-Model RMSE            : 74.9854
-Model MAE (diagnostic): 59.8314
+Model MSE             : 6515.6230
+Model RMSE            : 80.7194
+Model MAE (diagnostic): 63.1980
 
 --- Correlation with true EV ---
-Model corr            : 0.6532
+Model corr            : 0.5951
 
 ------------------------------------------------------------------------
 Group: S2 honba=5 riichi=2
@@ -3191,12 +3217,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4810.0088
-Model RMSE            : 69.3542
-Model MAE (diagnostic): 53.0189
+Model MSE             : 5554.6851
+Model RMSE            : 74.5298
+Model MAE (diagnostic): 56.0390
 
 --- Correlation with true EV ---
-Model corr            : 0.7054
+Model corr            : 0.6486
 
 ------------------------------------------------------------------------
 Group: S2 honba=5 riichi=3
@@ -3211,12 +3237,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2741.5166
-Model RMSE            : 52.3595
-Model MAE (diagnostic): 39.8224
+Model MSE             : 2959.8071
+Model RMSE            : 54.4041
+Model MAE (diagnostic): 40.9743
 
 --- Correlation with true EV ---
-Model corr            : 0.8389
+Model corr            : 0.8234
 
 ------------------------------------------------------------------------
 Group: S3 honba=0 riichi=0
@@ -3231,12 +3257,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3562.6729
-Model RMSE            : 59.6881
-Model MAE (diagnostic): 43.3091
+Model MSE             : 3694.4658
+Model RMSE            : 60.7821
+Model MAE (diagnostic): 43.7150
 
 --- Correlation with true EV ---
-Model corr            : 0.7812
+Model corr            : 0.7720
 
 ------------------------------------------------------------------------
 Group: S3 honba=1 riichi=0
@@ -3251,12 +3277,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3429.3428
-Model RMSE            : 58.5606
-Model MAE (diagnostic): 42.1815
+Model MSE             : 3532.8943
+Model RMSE            : 59.4382
+Model MAE (diagnostic): 42.4086
 
 --- Correlation with true EV ---
-Model corr            : 0.7928
+Model corr            : 0.7858
 
 ------------------------------------------------------------------------
 Group: S3 honba=1 riichi=1
@@ -3271,12 +3297,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4014.4299
-Model RMSE            : 63.3595
-Model MAE (diagnostic): 47.4813
+Model MSE             : 4126.0420
+Model RMSE            : 64.2343
+Model MAE (diagnostic): 47.5638
 
 --- Correlation with true EV ---
-Model corr            : 0.7462
+Model corr            : 0.7378
 
 ------------------------------------------------------------------------
 Group: S3 honba=1 riichi=2
@@ -3291,12 +3317,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4181.3457
-Model RMSE            : 64.6633
-Model MAE (diagnostic): 48.6428
+Model MSE             : 4348.6431
+Model RMSE            : 65.9442
+Model MAE (diagnostic): 49.2286
 
 --- Correlation with true EV ---
-Model corr            : 0.7328
+Model corr            : 0.7204
 
 ------------------------------------------------------------------------
 Group: S3 honba=1 riichi=3
@@ -3311,12 +3337,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 1654.7924
-Model RMSE            : 40.6791
-Model MAE (diagnostic): 29.0493
+Model MSE             : 1729.0160
+Model RMSE            : 41.5814
+Model MAE (diagnostic): 28.5762
 
 --- Correlation with true EV ---
-Model corr            : 0.9100
+Model corr            : 0.9045
 
 ------------------------------------------------------------------------
 Group: S3 honba=2 riichi=0
@@ -3331,12 +3357,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3448.6819
-Model RMSE            : 58.7255
-Model MAE (diagnostic): 42.6941
+Model MSE             : 3544.5957
+Model RMSE            : 59.5365
+Model MAE (diagnostic): 42.8640
 
 --- Correlation with true EV ---
-Model corr            : 0.7946
+Model corr            : 0.7883
 
 ------------------------------------------------------------------------
 Group: S3 honba=2 riichi=1
@@ -3351,12 +3377,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3827.2761
-Model RMSE            : 61.8650
-Model MAE (diagnostic): 46.5922
+Model MSE             : 3893.4504
+Model RMSE            : 62.3975
+Model MAE (diagnostic): 46.3233
 
 --- Correlation with true EV ---
-Model corr            : 0.7614
+Model corr            : 0.7564
 
 ------------------------------------------------------------------------
 Group: S3 honba=2 riichi=2
@@ -3371,12 +3397,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4625.7563
-Model RMSE            : 68.0129
-Model MAE (diagnostic): 51.2259
+Model MSE             : 4892.2490
+Model RMSE            : 69.9446
+Model MAE (diagnostic): 51.1923
 
 --- Correlation with true EV ---
-Model corr            : 0.6972
+Model corr            : 0.6776
 
 ------------------------------------------------------------------------
 Group: S3 honba=2 riichi=3
@@ -3391,12 +3417,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4040.7834
-Model RMSE            : 63.5672
-Model MAE (diagnostic): 51.5077
+Model MSE             : 4418.9526
+Model RMSE            : 66.4752
+Model MAE (diagnostic): 52.5374
 
 --- Correlation with true EV ---
-Model corr            : 0.7397
+Model corr            : 0.7126
 
 ------------------------------------------------------------------------
 Group: S3 honba=3 riichi=0
@@ -3411,12 +3437,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3304.9294
-Model RMSE            : 57.4885
-Model MAE (diagnostic): 41.0791
+Model MSE             : 3508.0479
+Model RMSE            : 59.2288
+Model MAE (diagnostic): 41.6726
 
 --- Correlation with true EV ---
-Model corr            : 0.8059
+Model corr            : 0.7927
 
 ------------------------------------------------------------------------
 Group: S3 honba=3 riichi=1
@@ -3431,12 +3457,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3944.5256
-Model RMSE            : 62.8055
-Model MAE (diagnostic): 46.6318
+Model MSE             : 4014.2913
+Model RMSE            : 63.3584
+Model MAE (diagnostic): 46.5634
 
 --- Correlation with true EV ---
-Model corr            : 0.7536
+Model corr            : 0.7485
 
 ------------------------------------------------------------------------
 Group: S3 honba=3 riichi=2
@@ -3446,17 +3472,17 @@ Seat-samples in group    : 172
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 43
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : -0.0000 (should be ~0)
+Avg sum(model EVs)    : 0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4650.8794
-Model RMSE            : 68.1974
-Model MAE (diagnostic): 51.5857
+Model MSE             : 4978.6812
+Model RMSE            : 70.5598
+Model MAE (diagnostic): 52.2437
 
 --- Correlation with true EV ---
-Model corr            : 0.7006
+Model corr            : 0.6773
 
 ------------------------------------------------------------------------
 Group: S3 honba=3 riichi=3
@@ -3471,12 +3497,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4076.5342
-Model RMSE            : 63.8477
-Model MAE (diagnostic): 51.7028
+Model MSE             : 4270.9741
+Model RMSE            : 65.3527
+Model MAE (diagnostic): 50.8935
 
 --- Correlation with true EV ---
-Model corr            : 0.7507
+Model corr            : 0.7339
 
 ------------------------------------------------------------------------
 Group: S3 honba=3 riichi=4
@@ -3491,12 +3517,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3721.2285
-Model RMSE            : 61.0019
-Model MAE (diagnostic): 45.7545
+Model MSE             : 4078.4111
+Model RMSE            : 63.8624
+Model MAE (diagnostic): 48.4099
 
 --- Correlation with true EV ---
-Model corr            : 0.7616
+Model corr            : 0.7326
 
 ------------------------------------------------------------------------
 Group: S3 honba=4 riichi=0
@@ -3511,12 +3537,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3095.1365
-Model RMSE            : 55.6340
-Model MAE (diagnostic): 40.1435
+Model MSE             : 3324.1643
+Model RMSE            : 57.6556
+Model MAE (diagnostic): 40.7769
 
 --- Correlation with true EV ---
-Model corr            : 0.8213
+Model corr            : 0.8065
 
 ------------------------------------------------------------------------
 Group: S3 honba=4 riichi=1
@@ -3526,17 +3552,17 @@ Seat-samples in group    : 180
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 45
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4005.0977
-Model RMSE            : 63.2858
-Model MAE (diagnostic): 45.9541
+Model MSE             : 4228.6113
+Model RMSE            : 65.0278
+Model MAE (diagnostic): 46.6948
 
 --- Correlation with true EV ---
-Model corr            : 0.7572
+Model corr            : 0.7424
 
 ------------------------------------------------------------------------
 Group: S3 honba=4 riichi=2
@@ -3551,12 +3577,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2723.1455
-Model RMSE            : 52.1838
-Model MAE (diagnostic): 38.3682
+Model MSE             : 2675.9075
+Model RMSE            : 51.7292
+Model MAE (diagnostic): 37.8679
 
 --- Correlation with true EV ---
-Model corr            : 0.8404
+Model corr            : 0.8430
 
 ------------------------------------------------------------------------
 Group: S3 honba=4 riichi=3
@@ -3571,12 +3597,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4106.6309
-Model RMSE            : 64.0830
-Model MAE (diagnostic): 50.7838
+Model MSE             : 4057.2280
+Model RMSE            : 63.6964
+Model MAE (diagnostic): 51.1592
 
 --- Correlation with true EV ---
-Model corr            : 0.7543
+Model corr            : 0.7575
 
 ------------------------------------------------------------------------
 Group: S3 honba=4 riichi=4
@@ -3591,12 +3617,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 10421.1387
-Model RMSE            : 102.0840
-Model MAE (diagnostic): 87.1636
+Model MSE             : 13117.3145
+Model RMSE            : 114.5308
+Model MAE (diagnostic): 98.4093
 
 --- Correlation with true EV ---
-Model corr            : -0.3393
+Model corr            : -0.5101
 
 ------------------------------------------------------------------------
 Group: S3 honba=5 riichi=0
@@ -3611,12 +3637,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2943.1426
-Model RMSE            : 54.2507
-Model MAE (diagnostic): 38.7206
+Model MSE             : 3064.5190
+Model RMSE            : 55.3581
+Model MAE (diagnostic): 39.0688
 
 --- Correlation with true EV ---
-Model corr            : 0.8354
+Model corr            : 0.8277
 
 ------------------------------------------------------------------------
 Group: S3 honba=5 riichi=1
@@ -3631,12 +3657,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4447.2910
-Model RMSE            : 66.6880
-Model MAE (diagnostic): 48.8960
+Model MSE             : 4478.7568
+Model RMSE            : 66.9235
+Model MAE (diagnostic): 47.6416
 
 --- Correlation with true EV ---
-Model corr            : 0.7329
+Model corr            : 0.7322
 
 ------------------------------------------------------------------------
 Group: S3 honba=5 riichi=2
@@ -3651,12 +3677,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2913.4680
-Model RMSE            : 53.9766
-Model MAE (diagnostic): 39.9266
+Model MSE             : 2701.8188
+Model RMSE            : 51.9790
+Model MAE (diagnostic): 38.2259
 
 --- Correlation with true EV ---
-Model corr            : 0.8441
+Model corr            : 0.8565
 
 ------------------------------------------------------------------------
 Group: S3 honba=5 riichi=3
@@ -3671,12 +3697,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3231.7708
-Model RMSE            : 56.8487
-Model MAE (diagnostic): 52.9724
+Model MSE             : 4036.8203
+Model RMSE            : 63.5360
+Model MAE (diagnostic): 57.1712
 
 --- Correlation with true EV ---
-Model corr            : 0.8104
+Model corr            : 0.7634
 
 ------------------------------------------------------------------------
 Group: S4 honba=0 riichi=0
@@ -3691,12 +3717,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2252.5579
-Model RMSE            : 47.4611
-Model MAE (diagnostic): 30.8242
+Model MSE             : 2379.0623
+Model RMSE            : 48.7756
+Model MAE (diagnostic): 32.1183
 
 --- Correlation with true EV ---
-Model corr            : 0.8664
+Model corr            : 0.8583
 
 ------------------------------------------------------------------------
 Group: S4 honba=1 riichi=0
@@ -3711,12 +3737,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2453.7524
-Model RMSE            : 49.5354
-Model MAE (diagnostic): 32.8047
+Model MSE             : 2579.6248
+Model RMSE            : 50.7900
+Model MAE (diagnostic): 34.0684
 
 --- Correlation with true EV ---
-Model corr            : 0.8537
+Model corr            : 0.8455
 
 ------------------------------------------------------------------------
 Group: S4 honba=1 riichi=1
@@ -3726,17 +3752,17 @@ Seat-samples in group    : 2856
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 714
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : -0.0000 (should be ~0)
+Avg sum(model EVs)    : 0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3002.4160
-Model RMSE            : 54.7943
-Model MAE (diagnostic): 37.1030
+Model MSE             : 3181.3054
+Model RMSE            : 56.4031
+Model MAE (diagnostic): 38.0978
 
 --- Correlation with true EV ---
-Model corr            : 0.8151
+Model corr            : 0.8031
 
 ------------------------------------------------------------------------
 Group: S4 honba=1 riichi=2
@@ -3751,12 +3777,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2417.4958
-Model RMSE            : 49.1680
-Model MAE (diagnostic): 33.7761
+Model MSE             : 2421.8728
+Model RMSE            : 49.2125
+Model MAE (diagnostic): 34.0408
 
 --- Correlation with true EV ---
-Model corr            : 0.8569
+Model corr            : 0.8566
 
 ------------------------------------------------------------------------
 Group: S4 honba=1 riichi=3
@@ -3771,12 +3797,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 14779.8965
-Model RMSE            : 121.5726
-Model MAE (diagnostic): 98.7815
+Model MSE             : 16078.9785
+Model RMSE            : 126.8029
+Model MAE (diagnostic): 103.3660
 
 --- Correlation with true EV ---
-Model corr            : -0.1831
+Model corr            : -0.2383
 
 ------------------------------------------------------------------------
 Group: S4 honba=1 riichi=4
@@ -3791,12 +3817,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 1469.6406
-Model RMSE            : 38.3359
-Model MAE (diagnostic): 33.1677
+Model MSE             : 1152.6801
+Model RMSE            : 33.9511
+Model MAE (diagnostic): 29.0536
 
 --- Correlation with true EV ---
-Model corr            : 0.9247
+Model corr            : 0.9403
 
 ------------------------------------------------------------------------
 Group: S4 honba=2 riichi=0
@@ -3811,12 +3837,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2331.3696
-Model RMSE            : 48.2843
-Model MAE (diagnostic): 32.7506
+Model MSE             : 2373.5029
+Model RMSE            : 48.7186
+Model MAE (diagnostic): 33.4944
 
 --- Correlation with true EV ---
-Model corr            : 0.8616
+Model corr            : 0.8589
 
 ------------------------------------------------------------------------
 Group: S4 honba=2 riichi=1
@@ -3831,12 +3857,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2862.8430
-Model RMSE            : 53.5055
-Model MAE (diagnostic): 36.7015
+Model MSE             : 2855.6582
+Model RMSE            : 53.4384
+Model MAE (diagnostic): 36.2901
 
 --- Correlation with true EV ---
-Model corr            : 0.8266
+Model corr            : 0.8272
 
 ------------------------------------------------------------------------
 Group: S4 honba=2 riichi=2
@@ -3851,12 +3877,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2913.7112
-Model RMSE            : 53.9788
-Model MAE (diagnostic): 36.1025
+Model MSE             : 2851.0825
+Model RMSE            : 53.3955
+Model MAE (diagnostic): 35.0885
 
 --- Correlation with true EV ---
-Model corr            : 0.8223
+Model corr            : 0.8264
 
 ------------------------------------------------------------------------
 Group: S4 honba=2 riichi=3
@@ -3866,17 +3892,17 @@ Seat-samples in group    : 76
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 19
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2585.2429
-Model RMSE            : 50.8453
-Model MAE (diagnostic): 39.1357
+Model MSE             : 2961.1387
+Model RMSE            : 54.4163
+Model MAE (diagnostic): 41.3385
 
 --- Correlation with true EV ---
-Model corr            : 0.8445
+Model corr            : 0.8176
 
 ------------------------------------------------------------------------
 Group: S4 honba=2 riichi=4
@@ -3891,12 +3917,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6202.4829
-Model RMSE            : 78.7558
-Model MAE (diagnostic): 50.9850
+Model MSE             : 6950.9971
+Model RMSE            : 83.3726
+Model MAE (diagnostic): 55.4821
 
 --- Correlation with true EV ---
-Model corr            : 0.6107
+Model corr            : 0.5722
 
 ------------------------------------------------------------------------
 Group: S4 honba=3 riichi=0
@@ -3911,12 +3937,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2259.1313
-Model RMSE            : 47.5303
-Model MAE (diagnostic): 31.9165
+Model MSE             : 2268.5217
+Model RMSE            : 47.6290
+Model MAE (diagnostic): 32.5221
 
 --- Correlation with true EV ---
-Model corr            : 0.8673
+Model corr            : 0.8666
 
 ------------------------------------------------------------------------
 Group: S4 honba=3 riichi=1
@@ -3931,12 +3957,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2516.5552
-Model RMSE            : 50.1653
-Model MAE (diagnostic): 34.5322
+Model MSE             : 2641.1985
+Model RMSE            : 51.3926
+Model MAE (diagnostic): 35.4207
 
 --- Correlation with true EV ---
-Model corr            : 0.8516
+Model corr            : 0.8435
 
 ------------------------------------------------------------------------
 Group: S4 honba=3 riichi=2
@@ -3951,12 +3977,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3100.3816
-Model RMSE            : 55.6811
-Model MAE (diagnostic): 37.8694
+Model MSE             : 3472.1731
+Model RMSE            : 58.9251
+Model MAE (diagnostic): 39.0018
 
 --- Correlation with true EV ---
-Model corr            : 0.8101
+Model corr            : 0.7846
 
 ------------------------------------------------------------------------
 Group: S4 honba=3 riichi=3
@@ -3966,17 +3992,17 @@ Seat-samples in group    : 48
 === EV ACCURACY RESULTS ===
 Rounds evaluated      : 12
 Rounds skipped (W+)   : 0
-Avg sum(model EVs)    : 0.0000 (should be ~0)
+Avg sum(model EVs)    : -0.0000 (should be ~0)
 RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4509.3169
-Model RMSE            : 67.1514
-Model MAE (diagnostic): 47.0624
+Model MSE             : 5662.4219
+Model RMSE            : 75.2491
+Model MAE (diagnostic): 51.2904
 
 --- Correlation with true EV ---
-Model corr            : 0.6943
+Model corr            : 0.6098
 
 ------------------------------------------------------------------------
 Group: S4 honba=3 riichi=4
@@ -3991,12 +4017,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 4371.3696
-Model RMSE            : 66.1163
-Model MAE (diagnostic): 54.2072
+Model MSE             : 3023.4583
+Model RMSE            : 54.9860
+Model MAE (diagnostic): 46.0418
 
 --- Correlation with true EV ---
-Model corr            : 0.9966
+Model corr            : 0.9953
 
 ------------------------------------------------------------------------
 Group: S4 honba=4 riichi=0
@@ -4011,12 +4037,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2232.7822
-Model RMSE            : 47.2523
-Model MAE (diagnostic): 31.4244
+Model MSE             : 2149.7542
+Model RMSE            : 46.3654
+Model MAE (diagnostic): 31.3315
 
 --- Correlation with true EV ---
-Model corr            : 0.8710
+Model corr            : 0.8762
 
 ------------------------------------------------------------------------
 Group: S4 honba=4 riichi=1
@@ -4031,12 +4057,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3043.9053
-Model RMSE            : 55.1716
-Model MAE (diagnostic): 35.3831
+Model MSE             : 3545.9204
+Model RMSE            : 59.5476
+Model MAE (diagnostic): 37.3947
 
 --- Correlation with true EV ---
-Model corr            : 0.8156
+Model corr            : 0.7826
 
 ------------------------------------------------------------------------
 Group: S4 honba=4 riichi=2
@@ -4051,12 +4077,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3054.6111
-Model RMSE            : 55.2685
-Model MAE (diagnostic): 43.2675
+Model MSE             : 3422.6531
+Model RMSE            : 58.5034
+Model MAE (diagnostic): 43.6964
 
 --- Correlation with true EV ---
-Model corr            : 0.8167
+Model corr            : 0.7905
 
 ------------------------------------------------------------------------
 Group: S4 honba=4 riichi=3
@@ -4071,12 +4097,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 3065.3208
-Model RMSE            : 55.3653
-Model MAE (diagnostic): 43.0410
+Model MSE             : 2684.3599
+Model RMSE            : 51.8108
+Model MAE (diagnostic): 39.5254
 
 --- Correlation with true EV ---
-Model corr            : 0.8199
+Model corr            : 0.8520
 
 ------------------------------------------------------------------------
 Group: S4 honba=4 riichi=4
@@ -4091,12 +4117,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 6627.0874
-Model RMSE            : 81.4069
-Model MAE (diagnostic): 66.7456
+Model MSE             : 8038.2456
+Model RMSE            : 89.6563
+Model MAE (diagnostic): 69.4872
 
 --- Correlation with true EV ---
-Model corr            : 0.3937
+Model corr            : 0.2697
 
 ------------------------------------------------------------------------
 Group: S4 honba=5 riichi=0
@@ -4111,12 +4137,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 1852.7693
-Model RMSE            : 43.0438
-Model MAE (diagnostic): 31.2496
+Model MSE             : 1765.8495
+Model RMSE            : 42.0220
+Model MAE (diagnostic): 30.6676
 
 --- Correlation with true EV ---
-Model corr            : 0.8952
+Model corr            : 0.9009
 
 ------------------------------------------------------------------------
 Group: S4 honba=5 riichi=1
@@ -4131,12 +4157,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2809.2173
-Model RMSE            : 53.0020
-Model MAE (diagnostic): 37.2194
+Model MSE             : 2512.4302
+Model RMSE            : 50.1241
+Model MAE (diagnostic): 34.0100
 
 --- Correlation with true EV ---
-Model corr            : 0.8438
+Model corr            : 0.8617
 
 ------------------------------------------------------------------------
 Group: S4 honba=5 riichi=2
@@ -4151,12 +4177,12 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 1536.7667
-Model RMSE            : 39.2016
-Model MAE (diagnostic): 30.0344
+Model MSE             : 2391.0396
+Model RMSE            : 48.8983
+Model MAE (diagnostic): 31.8117
 
 --- Correlation with true EV ---
-Model corr            : 0.9208
+Model corr            : 0.8637
 
 ------------------------------------------------------------------------
 Group: S4 honba=5 riichi=3
@@ -4171,9 +4197,9 @@ RMSE(sum model EVs)   : 0.0000 (should be small)
 Max |sum model EVs|   : 0.0000
 
 --- MSE / RMSE (thousands of points² / thousands) ---
-Model MSE             : 2166.1907
-Model RMSE            : 46.5424
-Model MAE (diagnostic): 36.7774
+Model MSE             : 2706.6086
+Model RMSE            : 52.0251
+Model MAE (diagnostic): 40.7240
 
 --- Correlation with true EV ---
-Model corr            : 0.8731
+Model corr            : 0.8374

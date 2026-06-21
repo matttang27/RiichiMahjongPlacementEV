@@ -2,3 +2,5 @@ streamlit
 xgboost
 numpy
 scikit-learn
+joblib
+torch

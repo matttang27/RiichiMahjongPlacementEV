@@ -59,6 +59,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_VALIDATE_SPLIT = 0.1
 DEFAULT_DB_PATH = str(REPO_ROOT / "data" / "rounds.db")
 DEFAULT_CALIBRATION_BUCKETS = 20
+DEFAULT_ORACLE_MIN_ROUNDS = 20
+DEFAULT_ORACLE_SCORE_BUCKET = 1000
 
 DEFAULT_GROUP_CALIB_MIN_SAMPLES = 200  # measured in seat-samples (4 per round)
 
@@ -193,6 +195,118 @@ class _GroupAccum:
     max_abs_sum_model: float = 0.0
 
 
+@dataclass
+class _OracleGroupAccum:
+    actual_by_round: list[tuple[float, float, float, float]] = field(default_factory=list)
+    model_by_round: list[tuple[float, float, float, float]] = field(default_factory=list)
+
+
+def _bucket_score(score_pts: int | float, bucket_points: int) -> int:
+    if bucket_points <= 0:
+        return int(score_pts)
+    return int(round(float(score_pts) / float(bucket_points)) * bucket_points)
+
+
+def _oracle_metrics(
+    groups: dict[tuple, _OracleGroupAccum],
+    *,
+    min_rounds: int,
+) -> dict:
+    min_rounds = max(2, int(min_rounds))
+    oracle_errors: list[float] = []
+    model_errors: list[float] = []
+    covered_rounds = 0
+    eligible_groups = 0
+
+    for group in groups.values():
+        n_rounds = len(group.actual_by_round)
+        if n_rounds < min_rounds:
+            continue
+
+        actual_arr = np.asarray(group.actual_by_round, dtype=np.float64)
+        model_arr = np.asarray(group.model_by_round, dtype=np.float64)
+        sum_by_seat = np.sum(actual_arr, axis=0)
+
+        eligible_groups += 1
+        covered_rounds += n_rounds
+
+        # Leave-one-out group mean avoids the direct self-leak that would make
+        # singleton or tiny groups look artificially perfect.
+        oracle_pred = (sum_by_seat.reshape(1, 4) - actual_arr) / float(n_rounds - 1)
+        oracle_errors.extend((actual_arr - oracle_pred).reshape(-1).tolist())
+        model_errors.extend((actual_arr - model_arr).reshape(-1).tolist())
+
+    if not oracle_errors:
+        return {
+            "eligible_groups": 0,
+            "covered_rounds": 0,
+            "seat_samples": 0,
+            "oracle_mse": float("nan"),
+            "oracle_rmse": float("nan"),
+            "oracle_mae": float("nan"),
+            "model_mse_on_subset": float("nan"),
+            "model_rmse_on_subset": float("nan"),
+            "model_mae_on_subset": float("nan"),
+        }
+
+    oracle_err = np.asarray(oracle_errors, dtype=np.float64)
+    model_err = np.asarray(model_errors, dtype=np.float64)
+    return {
+        "eligible_groups": eligible_groups,
+        "covered_rounds": covered_rounds,
+        "seat_samples": int(oracle_err.size),
+        "oracle_mse": float(np.mean(oracle_err * oracle_err)),
+        "oracle_rmse": float(np.sqrt(np.mean(oracle_err * oracle_err))),
+        "oracle_mae": float(np.mean(np.abs(oracle_err))),
+        "model_mse_on_subset": float(np.mean(model_err * model_err)),
+        "model_rmse_on_subset": float(np.sqrt(np.mean(model_err * model_err))),
+        "model_mae_on_subset": float(np.mean(np.abs(model_err))),
+    }
+
+
+def _oracle_report_lines(
+    *,
+    exact: dict,
+    coarse: dict,
+    count_rounds: int,
+    min_rounds: int,
+    score_bucket_points: int,
+) -> list[str]:
+    def block(name: str, metrics: dict) -> list[str]:
+        covered = int(metrics["covered_rounds"])
+        coverage = 0.0 if count_rounds == 0 else 100.0 * covered / float(count_rounds)
+        lines = [
+            f"\n{name}",
+            f"Eligible groups       : {int(metrics['eligible_groups'])}",
+            f"Covered rounds        : {covered} ({coverage:.2f}% of evaluated rounds)",
+            f"Seat-samples          : {int(metrics['seat_samples'])}",
+        ]
+        if covered == 0:
+            lines.append("No groups met the minimum round count.")
+            return lines
+
+        lines.extend(
+            [
+                f"Oracle RMSE           : {metrics['oracle_rmse']:.4f}",
+                f"Oracle MAE            : {metrics['oracle_mae']:.4f}",
+                f"Model RMSE same subset: {metrics['model_rmse_on_subset']:.4f}",
+                f"Model MAE same subset : {metrics['model_mae_on_subset']:.4f}",
+            ]
+        )
+        return lines
+
+    lines = [
+        "\n\n=== EMPIRICAL ORACLE / NOISE FLOOR CHECK ===",
+        "Oracle uses leave-one-out group-average actual EV from the validation slice.",
+        "This is not the true perfect RMSE; it is a repeated/similar-state noise-floor diagnostic.",
+        f"Minimum group size: {min_rounds} rounds",
+        f"Coarse score bucket: nearest {score_bucket_points} points",
+    ]
+    lines.extend(block("Exact-state oracle", exact))
+    lines.extend(block("Coarse-state oracle", coarse))
+    return lines
+
+
 def _next_available_report_path(out_path: str) -> Path:
     """
     Never overwrite an existing report file.
@@ -225,13 +339,23 @@ def evaluate_model_ev(
     calibration_buckets: int,
     out_path: str,
     summary_out_path: str | None,
+    oracle_min_rounds: int = DEFAULT_ORACLE_MIN_ROUNDS,
+    oracle_score_bucket: int = DEFAULT_ORACLE_SCORE_BUCKET,
+    model_loader=None,
+    predictor=None,
 ) -> dict:
     t0 = time.perf_counter()
 
     global model, current_feature_version, current_target_mode
     current_feature_version = feature_version
     current_target_mode = target_mode
-    model = load_model(model_path)
+    loader = model_loader or load_model
+    model = loader(model_path)
+
+    def call_predict(wind, round_num, honba, riichi, scores_pts):
+        if predictor is not None:
+            return predictor(model, wind, round_num, honba, riichi, scores_pts)
+        return predict(wind, round_num, honba, riichi, scores_pts)
 
     if not (0.0 < validate_split < 1.0):
         raise ValueError("validate_split must be in (0, 1)")
@@ -266,6 +390,8 @@ def evaluate_model_ev(
 
         # Grouped stats: (wind, round_num, honba_bucket, riichi_bucket) -> accumulator
         group_acc: dict[tuple[str, int, int, int], _GroupAccum] = defaultdict(_GroupAccum)
+        exact_oracle_groups: dict[tuple, _OracleGroupAccum] = defaultdict(_OracleGroupAccum)
+        coarse_oracle_groups: dict[tuple, _OracleGroupAccum] = defaultdict(_OracleGroupAccum)
 
         # Special identical-state accumulator: E1, honba=0, riichi=0, all scores=25000
         e1_identical_rounds = 0
@@ -289,7 +415,7 @@ def evaluate_model_ev(
             s_final_places = row[12:16]
             final_uma = [UMA[place - 1] for place in s_final_places]
 
-            pred = predict(wind, rnd, honba_b, riichi_b, s_start_pts)
+            pred = call_predict(wind, rnd, honba_b, riichi_b, s_start_pts)
             if len(pred) != 4:
                 raise ValueError(f"Model must return 4 EVs. Got {len(pred)}")
 
@@ -299,6 +425,8 @@ def evaluate_model_ev(
                 for i in range(4)
             ]
             per_seat_model = [float(x) for x in pred]
+            actual_tuple = tuple(float(x) for x in per_seat_actual)
+            model_tuple = tuple(float(x) for x in per_seat_model)
 
             actual_evs.extend(per_seat_actual)
             model_evs.extend(per_seat_model)
@@ -306,6 +434,25 @@ def evaluate_model_ev(
             ga = group_acc[gkey]
             ga.actual_evs.extend(per_seat_actual)
             ga.model_evs.extend(per_seat_model)
+
+            exact_key = (
+                wind_label,
+                int(rnd),
+                int(honba),
+                int(riichi),
+                tuple(int(s) for s in s_start_pts),
+            )
+            coarse_key = (
+                wind_label,
+                int(rnd),
+                int(honba_b),
+                int(riichi_b),
+                tuple(_bucket_score(s, int(oracle_score_bucket)) for s in s_start_pts),
+            )
+            exact_oracle_groups[exact_key].actual_by_round.append(actual_tuple)
+            exact_oracle_groups[exact_key].model_by_round.append(model_tuple)
+            coarse_oracle_groups[coarse_key].actual_by_round.append(actual_tuple)
+            coarse_oracle_groups[coarse_key].model_by_round.append(model_tuple)
 
             # Special identical-state check: only E1/0/0 with all scores == 25000
             if (
@@ -370,6 +517,24 @@ def evaluate_model_ev(
         )
         report_lines.extend(calibration_lines)
 
+    exact_oracle = _oracle_metrics(
+        exact_oracle_groups,
+        min_rounds=int(oracle_min_rounds),
+    )
+    coarse_oracle = _oracle_metrics(
+        coarse_oracle_groups,
+        min_rounds=int(oracle_min_rounds),
+    )
+    report_lines.extend(
+        _oracle_report_lines(
+            exact=exact_oracle,
+            coarse=coarse_oracle,
+            count_rounds=count_rounds,
+            min_rounds=int(oracle_min_rounds),
+            score_bucket_points=int(oracle_score_bucket),
+        )
+    )
+
     # Special identical-state section (E1 honba=0 riichi=0, all 25000)
     report_lines.append("\n\n=== SPECIAL CHECK: IDENTICAL START STATE (E1 honba=0 riichi=0, all 25000) ===")
     if e1_identical_rounds == 0:
@@ -377,7 +542,7 @@ def evaluate_model_ev(
     else:
         avg_actual = (e1_sum_actual_by_seat / float(e1_identical_rounds)).astype(float)
         canonical_pred = tuple(
-            float(x) for x in predict("E", 1, 0, 0, [25000, 25000, 25000, 25000])
+            float(x) for x in call_predict("E", 1, 0, 0, [25000, 25000, 25000, 25000])
         )
 
         report_lines.append(f"Rounds in this exact state: {e1_identical_rounds}")
@@ -448,6 +613,10 @@ def evaluate_model_ev(
             "validate_split": validate_split,
             "max_rounds": max_rounds,
             "calibration_buckets": calibration_buckets,
+            "oracle_min_rounds": oracle_min_rounds,
+            "oracle_score_bucket": oracle_score_bucket,
+            "oracle_exact": exact_oracle,
+            "oracle_coarse": coarse_oracle,
             "model_mse": float("nan"),
             "model_rmse": float("nan"),
             "model_mae": float("nan"),
@@ -480,11 +649,15 @@ def evaluate_model_ev(
         "validate_split": validate_split,
         "max_rounds": max_rounds,
         "calibration_buckets": calibration_buckets,
+        "oracle_min_rounds": oracle_min_rounds,
+        "oracle_score_bucket": oracle_score_bucket,
         "model_mse": model_mse,
         "model_rmse": model_rmse,
         "model_mae": model_mae,
         "model_corr": model_corr,
         "calibration_avg_abs_diff": calibration_avg_abs_diff,
+        "oracle_exact": exact_oracle,
+        "oracle_coarse": coarse_oracle,
         "avg_sum_model": avg_sum_model,
         "sum_model_rmse": sum_model_rmse,
         "max_abs_sum_model": abs_sum_model_max,
@@ -543,6 +716,18 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Number of quantile buckets for calibration table (0 to disable)",
     )
     p.add_argument(
+        "--oracle-min-rounds",
+        type=int,
+        default=DEFAULT_ORACLE_MIN_ROUNDS,
+        help="Minimum rounds in an exact/coarse state group for oracle diagnostics",
+    )
+    p.add_argument(
+        "--oracle-score-bucket",
+        type=int,
+        default=DEFAULT_ORACLE_SCORE_BUCKET,
+        help="Score bucket size in points for coarse oracle diagnostics",
+    )
+    p.add_argument(
         "--out",
         default=None,
         help="Where to write the full text report. Defaults by feature version.",
@@ -579,6 +764,8 @@ def main(argv: Sequence[str] | None = None) -> dict:
         calibration_buckets=int(args.calibration_buckets),
         out_path=str(out_path),
         summary_out_path=str(summary_out_path),
+        oracle_min_rounds=int(args.oracle_min_rounds),
+        oracle_score_bucket=int(args.oracle_score_bucket),
     )
 
 

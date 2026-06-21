@@ -186,7 +186,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     out_path = (
         Path(args.out)
         if args.out
-        else DEFAULT_EXPERIMENTS_DIR / f"monotonic_checks_{args.features}.txt"
+        else DEFAULT_EXPERIMENTS_DIR / "xgboost" / args.features / "monotonic_checks.txt"
     )
 
     lines, violations = run_checks(

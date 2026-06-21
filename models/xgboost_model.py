@@ -82,21 +82,21 @@ def default_model_path_for_features(feature_version: str) -> Path:
     get_feature_names(feature_version)
     if feature_version == "legacy":
         return MODEL_PATH
-    return EXPERIMENTS_DIR / f"xgboost_features_{feature_version}.json"
+    return EXPERIMENTS_DIR / "xgboost" / feature_version / "model.json"
 
 
 def default_evaluation_path_for_features(feature_version: str) -> Path:
     get_feature_names(feature_version)
     if feature_version == "legacy":
         return Path(__file__).resolve().parent / "evaluation_current.txt"
-    return EXPERIMENTS_DIR / f"evaluation_features_{feature_version}.txt"
+    return EXPERIMENTS_DIR / "xgboost" / feature_version / "evaluation.txt"
 
 
 def default_summary_path_for_features(feature_version: str) -> Path:
     get_feature_names(feature_version)
     if feature_version == "legacy":
         return Path(__file__).resolve().parent / "evaluation_current_summary.json"
-    return EXPERIMENTS_DIR / f"evaluation_features_{feature_version}_summary.json"
+    return EXPERIMENTS_DIR / "xgboost" / feature_version / "summary.json"
 
 
 def default_target_mode_for_features(feature_version: str) -> str:

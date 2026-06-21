@@ -1,6 +1,6 @@
 # Monotonic EV sanity checks
 
-Model: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\models\experiments\xgboost_features_v1.json
+Model: C:\Users\mattt\Documents\MatthewPrograms\RiichiMahjongPlacementEV\models\experiments\xgboost\v1\model.json
 Feature version: v1
 Target mode: residual_uma
 Tolerance: 0.050

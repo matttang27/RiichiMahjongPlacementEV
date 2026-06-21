@@ -1,14 +1,14 @@
 # XGBoost Progress and Improvement Plan
 
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Current State
 
 The active predictor is the saved XGBoost model at `models/xgboost.json`.
 The best aggregate-metric experiment is the feature-v1 XGBoost model at
-`models/experiments/xgboost_features_v1.json`.
+`models/experiments/xgboost/v1/model.json`.
 The best behavioral-sanity experiment is the feature-v2 XGBoost model at
-`models/experiments/xgboost_features_v2.json`.
+`models/experiments/xgboost/v2/model.json`.
 
 Current command paths:
 
@@ -18,12 +18,30 @@ Current command paths:
 - Full legacy evaluation: `.venv\Scripts\python.exe -m models.evaluate_model --out models\evaluation_current.txt`
 - Full v1 evaluation: `.venv\Scripts\python.exe -m models.evaluate_model --features v1`
 - Full v2 evaluation: `.venv\Scripts\python.exe -m models.evaluate_model --features v2`
+- Oracle diagnostics are included in evaluations; defaults are `--oracle-min-rounds 20 --oracle-score-bucket 1000`
 - Monotonic sanity checks: `.venv\Scripts\python.exe -m models.monotonic_checks --features v2`
 - Legacy training: `.venv\Scripts\python.exe -m models.xgboost_model`
 - V1 training: `.venv\Scripts\python.exe -m models.xgboost_model --features v1`
 - V2 training: `.venv\Scripts\python.exe -m models.xgboost_model --features v2`
+- NN smoke training: `.venv\Scripts\python.exe -m models.nn_model --max-rows 5000 --max-iter 5 --model models\experiments\sklearn_nn\joint_v1_smoke\model.joblib`
+- NN full training: `.venv\Scripts\python.exe -m models.nn_model`
+- NN evaluation: `.venv\Scripts\python.exe -m models.evaluate_nn`
+- NN monotonic checks: `.venv\Scripts\python.exe -m models.monotonic_checks_nn`
+- PyTorch NN smoke training: `.venv\Scripts\python.exe -m models.torch_nn_model --max-rows 5000 --epochs 3 --batch-size 1024 --hidden-dim 128 --layers 3 --model models\experiments\torch_nn\joint_v1_smoke\model.pt --training-log models\experiments\torch_nn\joint_v1_smoke\training_log.json`
+- PyTorch NN full training: `.venv\Scripts\python.exe -m models.torch_nn_model`
+- PyTorch NN evaluation: `.venv\Scripts\python.exe -m models.evaluate_torch_nn`
+- PyTorch NN monotonic checks: `.venv\Scripts\python.exe -m models.monotonic_checks_torch_nn --random-cases 100`
 
 Output convention: keep generated reports, experiment models, and smoke-test artifacts inside this repository. Do not write project outputs to `C:\tmp`.
+
+Experiment artifacts are organized by model family and experiment name:
+
+```text
+models/experiments/
+  xgboost/<version>/
+  sklearn_nn/<experiment>/
+  torch_nn/<experiment>/
+```
 
 ## Current Model Behavior
 
@@ -67,6 +85,17 @@ V2 uses XGBoost monotone constraints for the clearest directional score features
 own score and own score gaps are constrained positive; rotated opponent scores
 are constrained negative.
 
+The first neural-net experiment is `nn_joint_v1`. It uses one row per game
+state, predicts all four seat EVs jointly, and recenters outputs so the four
+predictions sum to zero. It is implemented with scikit-learn's `MLPRegressor`
+inside a scaling pipeline, avoiding a PyTorch/TensorFlow dependency for the
+first pass.
+
+The first custom neural-net experiment is `torch_joint_v1`. It uses the same
+full-state feature shape as `nn_joint_v1`, predicts all four seat EVs jointly,
+and enforces zero-sum in the network forward pass. Training uses direct final-EV
+targets plus an optional monotonicity penalty from random score-transfer pairs.
+
 Known data detail: the current `data/rounds.db` stores winds as integers (`0`, `1`, `2`). The XGBoost path now treats `0/E` as East and `1/S` as South while skipping West continuation rounds.
 
 ## Latest Evaluation
@@ -101,9 +130,9 @@ Special E1 all-25k check:
 
 Artifacts:
 
-- Model: `models/experiments/xgboost_features_v1.json`
-- Full report: `models/experiments/evaluation_features_v1.txt`
-- Summary JSON: `models/experiments/evaluation_features_v1_summary.json`
+- Model: `models/experiments/xgboost/v1/model.json`
+- Full report: `models/experiments/xgboost/v1/evaluation.txt`
+- Summary JSON: `models/experiments/xgboost/v1/summary.json`
 
 Training/evaluation setup:
 
@@ -139,10 +168,10 @@ Special E1 all-25k check:
 
 Artifacts:
 
-- Model: `models/experiments/xgboost_features_v2.json`
-- Full report: `models/experiments/evaluation_features_v2.txt`
-- Summary JSON: `models/experiments/evaluation_features_v2_summary.json`
-- Monotonic checks: `models/experiments/monotonic_checks_v2.txt`
+- Model: `models/experiments/xgboost/v2/model.json`
+- Full report: `models/experiments/xgboost/v2/evaluation.txt`
+- Summary JSON: `models/experiments/xgboost/v2/summary.json`
+- Monotonic checks: `models/experiments/xgboost/v2/monotonic_checks.txt`
 
 Training/evaluation setup:
 
@@ -183,6 +212,94 @@ Specific sanity cases:
 - `S 1 0 0 35000 35000 14900 15100`, increasing seat 2 by 100-point steps while decreasing seat 3, is monotone for seat 2 under v2.
 - `E 2 0 0 25000 25000 25000 25000` v2 prediction: `-0.954, -0.285, -0.011, +1.250`.
 
+## Joint NN Experiment
+
+Status: smoke-tested only.
+
+Artifacts from smoke run:
+
+- Model: `models/experiments/sklearn_nn/joint_v1_smoke/model.joblib`
+- Full report: `models/experiments/sklearn_nn/joint_v1_smoke/evaluation.txt`
+- Summary JSON: `models/experiments/sklearn_nn/joint_v1_smoke/summary.json`
+- Monotonic checks: `models/experiments/sklearn_nn/joint_v1_smoke/monotonic_checks.txt`
+
+Implemented commands:
+
+- Training: `.venv\Scripts\python.exe -m models.nn_model`
+- CLI prediction: `.venv\Scripts\python.exe -m models.nn_cli`
+- Evaluation: `.venv\Scripts\python.exe -m models.evaluate_nn`
+- Monotonic checks: `.venv\Scripts\python.exe -m models.monotonic_checks_nn`
+
+Design:
+
+- Input: one full game-state row, not one seat row.
+- Output: four EVs jointly.
+- Target: direct final EV for all four seats.
+- Inference: subtract mean prediction so outputs are zero-sum.
+- Default training fraction: first 90% of DB rows, preserving the evaluator's
+  last-10% validation slice.
+
+Smoke run:
+
+- Training matrix: `4,969` rows x `38` features
+- Hidden layers: `128,64`
+- Max iterations: `5`
+- Monotonic sanity violations: `0`
+- The smoke model is not a quality result; it only verifies the pipeline.
+
+## PyTorch Joint NN Experiment
+
+Status: smoke-tested only.
+
+Artifacts from smoke run:
+
+- Model: `models/experiments/torch_nn/joint_v1_smoke/model.pt`
+- Training log: `models/experiments/torch_nn/joint_v1_smoke/training_log.json`
+- Full report: `models/experiments/torch_nn/joint_v1_smoke/evaluation.txt`
+- Summary JSON: `models/experiments/torch_nn/joint_v1_smoke/summary.json`
+- Monotonic checks: `models/experiments/torch_nn/joint_v1_smoke/monotonic_checks.txt`
+
+Implemented commands:
+
+- Training: `.venv\Scripts\python.exe -m models.torch_nn_model`
+- CLI prediction: `.venv\Scripts\python.exe -m models.torch_nn_cli`
+- Evaluation: `.venv\Scripts\python.exe -m models.evaluate_torch_nn`
+- Monotonic checks: `.venv\Scripts\python.exe -m models.monotonic_checks_torch_nn`
+
+Default full-training configuration:
+
+- Hidden dimension: `256`
+- Layers: `4`
+- Dropout: `0.05`
+- Batch size: `4096`
+- Epochs: `20`
+- Optimizer: `AdamW`
+- Learning rate: `0.001`
+- Weight decay: `0.0001`
+- Monotonic penalty weight: `0.05`
+- Monotonic transfer delta: `0.1` thousand points
+
+Design:
+
+- Input: one full game-state row, not one seat row.
+- Output: four EVs jointly.
+- Target: direct final EV for all four seats.
+- Network forward pass subtracts the mean output, so the model is zero-sum by construction.
+- Target scaling uses one shared EV scale across all seats, preserving zero-sum in scaled space.
+- Training can add monotonicity penalty by transferring points from a random donor to a random recipient and penalizing recipient-EV decreases.
+- Monotonic check command can include random sampled states with `--random-cases`.
+
+Smoke run:
+
+- Training matrix: `4,969` rows x `38` features
+- Hidden dimension/layers: `128 x 3`
+- Epochs: `3`
+- Validation scaled MSE: `0.6609`
+- Evaluation RMSE on 500 held-out rounds: `80.9834`
+- Avg abs calibration-bucket diff on 500 held-out rounds: `6.672`
+- Monotonic sanity violations: `0`, including `5` random sampled transfer states
+- The smoke model is not a quality result; it only verifies the pipeline.
+
 ## Main Read
 
 The current legacy model is not behaviorally reliable around close placement
@@ -190,6 +307,17 @@ boundaries because the residual target is built on a discontinuous "game ended
 now" uma baseline. Calibration buckets did not catch this. Monotonic sanity
 checks are now a required model-selection metric alongside RMSE, correlation,
 calibration, and zero-sum checks.
+
+Evaluations now include an empirical oracle / noise-floor diagnostic. It groups
+validation states two ways:
+
+- exact state: `(wind, round, honba, riichi, exact start scores)`
+- coarse state: `(wind, round, honba bucket, riichi bucket, start scores rounded to nearest score bucket)`
+
+For each eligible group, the oracle prediction is the leave-one-out mean actual
+EV of the other rounds in that group. This prevents singleton groups from
+looking artificially perfect. It is not the true perfect RMSE; it is a
+repeated/similar-state variance diagnostic.
 
 V1 is currently best on aggregate predictive metrics. V2 is currently best on
 the score-transfer monotonicity checks that exposed the strange behavior.
@@ -259,9 +387,9 @@ Train this as a new model artifact, not over `models/xgboost.json`, until it win
 
 Suggested artifact names:
 
-- `models/experiments/xgboost_features_v1.json`
-- `models/experiments/evaluation_features_v1.txt`
-- `models/experiments/evaluation_features_v1_summary.json`
+- `models/experiments/xgboost/v1/model.json`
+- `models/experiments/xgboost/v1/evaluation.txt`
+- `models/experiments/xgboost/v1/summary.json`
 
 ### 4. Add Round Phase and Dealer Features
 
@@ -322,4 +450,6 @@ The next experiment should improve v2 without reintroducing discontinuities:
 - expand monotonic checks to randomly sampled score-transfer states
 - tune XGBoost hyperparameters for v2 direct EV targets
 - test phase-specific models for early, mid, S3, and S4 states
+- train and evaluate `nn_joint_v1` on a larger sample or full training slice
+- train and evaluate `torch_joint_v1` on the full training slice
 - consider a smooth post-model calibrator only if it preserves monotonic checks

@@ -1,0 +1,21 @@
+{
+  "avg_sum_model": 0.0,
+  "calibration_avg_abs_diff": 7.949511343240738,
+  "calibration_buckets": 20,
+  "db_path": "C:\\Users\\mattt\\Documents\\MatthewPrograms\\RiichiMahjongPlacementEV\\data\\rounds.db",
+  "feature_version": "nn_joint_v1",
+  "max_abs_sum_model": 0.0,
+  "max_rounds": 500,
+  "model_corr": 0.5393910549249955,
+  "model_mae": 65.297607421875,
+  "model_mse": 6641.51708984375,
+  "model_path": "C:\\Users\\mattt\\Documents\\MatthewPrograms\\RiichiMahjongPlacementEV\\models\\experiments\\sklearn_nn\\joint_v1_smoke\\model.joblib",
+  "model_rmse": 81.49550349463307,
+  "out_path": "models\\experiments\\sklearn_nn\\joint_v1_smoke\\evaluation.txt",
+  "rounds": 500,
+  "skipped_rounds": 0,
+  "sum_model_rmse": 0.0,
+  "target_mode": "joint_direct_ev",
+  "timestamp": "2026-06-21T04:02:37",
+  "validate_split": 0.1
+}
